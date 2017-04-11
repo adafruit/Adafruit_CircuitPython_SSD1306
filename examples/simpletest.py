@@ -5,17 +5,14 @@
 
 # Import all board pins.
 from board import *
-# Use this import for ESP8266 and other boards with software I2C interfaces:
-import bitbangio as io
-# Or use this import for SAMD21 and boards with a native hardware I2C interace:
-#import nativeio as io
+import busio
 
 # Import the SSD1306 module.
 import adafruit_ssd1306
 
 
 # Create the I2C interface.
-i2c = io.I2C(SCL, SDA)
+i2c = busio.I2C(SCL, SDA)
 
 # Create the SSD1306 OLED class.
 # The first two parameters are the pixel width and pixel height.  Change these
