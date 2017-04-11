@@ -121,13 +121,13 @@ class SSD1306_I2C(SSD1306):
         self.temp[0] = 0x80 # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
-            self.i2c_device.writeto(self.temp)
+            self.i2c_device.write(self.temp)
 
     def write_framebuf(self):
         # Blast out the frame buffer using a single I2C transaction to support
         # hardware I2C interfaces.
         with self.i2c_device:
-            self.i2c_device.writeto(self.buffer)
+            self.i2c_device.write(self.buffer)
 
     def poweron(self):
         pass
