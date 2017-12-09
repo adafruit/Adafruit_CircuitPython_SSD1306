@@ -4,7 +4,7 @@
 # License: Public Domain
 
 # Import all board pins.
-from board import *
+from board import SCL, SDA
 import busio
 
 # Import the SSD1306 module.

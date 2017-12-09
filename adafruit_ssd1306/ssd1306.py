@@ -1,10 +1,15 @@
+"""SSD1306 OLED driver, I2C and SPI interfaces"""
 # MicroPython SSD1306 OLED driver, I2C and SPI interfaces
 import time
 import framebuf
 
 from adafruit_bus_device import i2c_device, spi_device
+from micropython import const
 
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
 
+#pylint: disable-msg=bad-whitespace
 # register definitions
 SET_CONTRAST        = const(0x81)
 SET_ENTIRE_ON       = const(0xa4)
@@ -23,10 +28,13 @@ SET_DISP_CLK_DIV    = const(0xd5)
 SET_PRECHARGE       = const(0xd9)
 SET_VCOM_DESEL      = const(0xdb)
 SET_CHARGE_PUMP     = const(0x8d)
+#pylint: enable-msg=bad-whitespace
 
 
 class SSD1306:
-    def __init__(self, width, height, external_vcc):
+    """base class for SSD1306 display driver"""
+    def __init__(self, framebuffer, width, height, external_vcc):
+        self.framebuf = framebuffer
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
@@ -38,72 +46,95 @@ class SSD1306:
         self.init_display()
 
     def init_display(self):
+        """base class initialize display"""
         for cmd in (
-            SET_DISP | 0x00, # off
-            # address setting
-            SET_MEM_ADDR, 0x00, # horizontal
-            # resolution and layout
-            SET_DISP_START_LINE | 0x00,
-            SET_SEG_REMAP | 0x01, # column addr 127 mapped to SEG0
-            SET_MUX_RATIO, self.height - 1,
-            SET_COM_OUT_DIR | 0x08, # scan from COM[N] to COM0
-            SET_DISP_OFFSET, 0x00,
-            SET_COM_PIN_CFG, 0x02 if self.height == 32 else 0x12,
-            # timing and driving scheme
-            SET_DISP_CLK_DIV, 0x80,
-            SET_PRECHARGE, 0x22 if self.external_vcc else 0xf1,
-            SET_VCOM_DESEL, 0x30, # 0.83*Vcc
-            # display
-            SET_CONTRAST, 0xff, # maximum
-            SET_ENTIRE_ON, # output follows RAM contents
-            SET_NORM_INV, # not inverted
-            # charge pump
-            SET_CHARGE_PUMP, 0x10 if self.external_vcc else 0x14,
-            SET_DISP | 0x01): # on
+                SET_DISP | 0x00, # off
+                # address setting
+                SET_MEM_ADDR, 0x00, # horizontal
+                # resolution and layout
+                SET_DISP_START_LINE | 0x00,
+                SET_SEG_REMAP | 0x01, # column addr 127 mapped to SEG0
+                SET_MUX_RATIO, self.height - 1,
+                SET_COM_OUT_DIR | 0x08, # scan from COM[N] to COM0
+                SET_DISP_OFFSET, 0x00,
+                SET_COM_PIN_CFG, 0x02 if self.height == 32 else 0x12,
+                # timing and driving scheme
+                SET_DISP_CLK_DIV, 0x80,
+                SET_PRECHARGE, 0x22 if self.external_vcc else 0xf1,
+                SET_VCOM_DESEL, 0x30, # 0.83*Vcc
+                # display
+                SET_CONTRAST, 0xff, # maximum
+                SET_ENTIRE_ON, # output follows RAM contents
+                SET_NORM_INV, # not inverted
+                # charge pump
+                SET_CHARGE_PUMP, 0x10 if self.external_vcc else 0x14,
+                SET_DISP | 0x01): # on
             self.write_cmd(cmd)
         self.fill(0)
         self.show()
 
     def poweroff(self):
+        """poweroff"""
         self.write_cmd(SET_DISP | 0x00)
 
     def contrast(self, contrast):
+        """adjust the contrast"""
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
 
     def invert(self, invert):
+        """invert the pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
+    def write_framebuf(self):
+        """"derived class must implement this"""
+        pass
+
+    def write_cmd(self, cmd):
+        """"derived class must implement this"""
+        pass
+
+    def poweron(self):
+        """"derived class must implement this"""
+        pass
+
     def show(self):
-        x0 = 0
-        x1 = self.width - 1
+        """update the display"""
+        xpos0 = 0
+        xpos1 = self.width - 1
         if self.width == 64:
             # displays with width of 64 pixels are shifted by 32
-            x0 += 32
-            x1 += 32
+            xpos0 += 32
+            xpos1 += 32
         self.write_cmd(SET_COL_ADDR)
-        self.write_cmd(x0)
-        self.write_cmd(x1)
+        self.write_cmd(xpos0)
+        self.write_cmd(xpos1)
         self.write_cmd(SET_PAGE_ADDR)
         self.write_cmd(0)
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
 
-    def fill(self, col):
-        self.framebuf.fill(col)
+    def fill(self, value):
+        """fill the display on or off"""
+        self.framebuf.fill(value)
 
-    def pixel(self, x, y, col):
-        self.framebuf.pixel(x, y, col)
+    def pixel(self, xpos, ypos, value):
+        """set a pixel to on or off at x,y"""
+        self.framebuf.pixel(xpos, ypos, value)
 
-    def scroll(self, dx, dy):
-        self.framebuf.scroll(dx, dy)
+    def scroll(self, deltax, deltay):
+        """scroll the display content by delta x,y"""
+        self.framebuf.scroll(deltax, deltay)
 
-    def text(self, string, x, y, col=1):
-        self.framebuf.text(string, x, y, col)
-
+    def text(self, string, xpos, ypos, col=1):
+        """place text on display"""
+        self.framebuf.text(string, xpos, ypos, col)
 
 class SSD1306_I2C(SSD1306):
-    def __init__(self, width, height, i2c, addr=0x3c, external_vcc=False):
+    """ I2C class for SSD1306
+    """
+
+    def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
         self.temp = bytearray(2)
@@ -114,50 +145,57 @@ class SSD1306_I2C(SSD1306):
         # buffer).
         self.buffer = bytearray(((height // 8) * width) + 1)
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
-        self.framebuf = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
-        super().__init__(width, height, external_vcc)
+        framebuffer = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
+        super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
+        """Send a command to the SPI device"""
         self.temp[0] = 0x80 # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
             self.i2c_device.write(self.temp)
 
     def write_framebuf(self):
-        # Blast out the frame buffer using a single I2C transaction to support
-        # hardware I2C interfaces.
+        """Blast out the frame buffer using a single I2C transaction to support
+        hardware I2C interfaces."""
         with self.i2c_device:
             self.i2c_device.write(self.buffer)
 
     def poweron(self):
+        """Turn power off on the device"""
         pass
 
-
+#pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(SSD1306):
-    def __init__(self, width, height, spi, dc, res, cs, external_vcc=False,
-                 baudrate=8000000, polarity=0, phase=0):
+    """ SPI class for SSD1306
+    """
+    def __init__(self, width, height, spi, dc, res, cs, *,
+                 external_vcc=False, baudrate=8000000, polarity=0, phase=0):
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
         res.switch_to_output(value=0)
         self.spi_device = spi_device.SPIDevice(spi, cs, baudrate=baudrate,
                                                polarity=polarity, phase=phase)
-        self.dc = dc
+        self.d_or_c = dc
         self.res = res
         self.buffer = bytearray((height // 8) * width)
-        self.framebuf = framebuf.FrameBuffer1(self.buffer, width, height)
-        super().__init__(width, height, external_vcc)
+        framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
+        super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
-        self.dc.value = 0
+        """Send a command to the SPI device"""
+        self.d_or_c.value = 0
         with self.spi_device:
             self.spi_device.write(bytearray([cmd]))
 
     def write_framebuf(self):
-        self.dc.value = 1
+        """write to the frame buffer via SPI"""
+        self.d_or_c.value = 1
         with self.spi_device:
-            self.spi.write(self.buffer)
+            self.spi_device.write(self.buffer)
 
     def poweron(self):
+        """Turn power off on the device"""
         self.res.value = 1
         time.sleep(0.001)
         self.res.value = 0
