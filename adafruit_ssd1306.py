@@ -31,8 +31,8 @@ SET_CHARGE_PUMP     = const(0x8d)
 #pylint: enable-msg=bad-whitespace
 
 
-class SSD1306:
-    """base class for SSD1306 display driver"""
+class _SSD1306:
+    """Base class for SSD1306 display driver"""
     def __init__(self, framebuffer, width, height, external_vcc):
         self.framebuf = framebuffer
         self.width = width
@@ -46,7 +46,7 @@ class SSD1306:
         self.init_display()
 
     def init_display(self):
-        """base class initialize display"""
+        """Base class to initialize display"""
         for cmd in (
                 SET_DISP | 0x00, # off
                 # address setting
@@ -74,32 +74,32 @@ class SSD1306:
         self.show()
 
     def poweroff(self):
-        """poweroff"""
+        """Turn the device Power off"""
         self.write_cmd(SET_DISP | 0x00)
 
     def contrast(self, contrast):
-        """adjust the contrast"""
+        """Adjust the contrast"""
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
 
     def invert(self, invert):
-        """invert the pixels on the display"""
+        """Invert the pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
     def write_framebuf(self):
-        """"derived class must implement this"""
-        pass
+        """Derived class must implement this"""
+        raise NotImplementedError
 
     def write_cmd(self, cmd):
-        """"derived class must implement this"""
-        pass
+        """Derived class must implement this"""
+        raise NotImplementedError
 
     def poweron(self):
-        """"derived class must implement this"""
-        pass
+        """Derived class must implement this"""
+        raise NotImplementedError
 
     def show(self):
-        """update the display"""
+        """Update the display"""
         xpos0 = 0
         xpos1 = self.width - 1
         if self.width == 64:
@@ -115,22 +115,22 @@ class SSD1306:
         self.write_framebuf()
 
     def fill(self, value):
-        """fill the display on or off"""
+        """Fill the display on or off"""
         self.framebuf.fill(value)
 
     def pixel(self, xpos, ypos, value):
-        """set a pixel to on or off at x,y"""
+        """Set a pixel to on or off at x,y"""
         self.framebuf.pixel(xpos, ypos, value)
 
     def scroll(self, deltax, deltay):
-        """scroll the display content by delta x,y"""
+        """Scroll the display content by delta x,y"""
         self.framebuf.scroll(deltax, deltay)
 
     def text(self, string, xpos, ypos, col=1):
-        """place text on display"""
+        """Place text on display"""
         self.framebuf.text(string, xpos, ypos, col)
 
-class SSD1306_I2C(SSD1306):
+class SSD1306_I2C(_SSD1306):
     """ I2C class for SSD1306
     """
 
@@ -162,11 +162,11 @@ class SSD1306_I2C(SSD1306):
             self.i2c_device.write(self.buffer)
 
     def poweron(self):
-        """Turn power off on the device"""
-        pass
+        """Turn power on the device"""
+        self.write_cmd(SET_DISP | 0x01)
 
 #pylint: disable-msg=too-many-arguments
-class SSD1306_SPI(SSD1306):
+class SSD1306_SPI(_SSD1306):
     """ SPI class for SSD1306
     """
     def __init__(self, width, height, spi, dc, res, cs, *,
