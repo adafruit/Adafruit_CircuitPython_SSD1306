@@ -176,28 +176,28 @@ class SSD1306_SPI(_SSD1306):
         res.switch_to_output(value=0)
         self.spi_device = spi_device.SPIDevice(spi, cs, baudrate=baudrate,
                                                polarity=polarity, phase=phase)
-        self.d_or_c = dc
-        self.res = res
+        self.dc_pin = dc
+        self.reset_pin = res
         self.buffer = bytearray((height // 8) * width)
         framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
         super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
-        self.d_or_c.value = 0
+        self.dc_pin.value = 0
         with self.spi_device as spi:
             spi.write(bytearray([cmd]))
 
     def write_framebuf(self):
         """write to the frame buffer via SPI"""
-        self.d_or_c.value = 1
+        self.dc_pin.value = 1
         with self.spi_device as spi:
             spi.write(self.buffer)
 
     def poweron(self):
         """Turn power off on the device"""
-        self.res.value = 1
+        self.reset_pin.value = 1
         time.sleep(0.001)
-        self.res.value = 0
+        self.reset_pin.value = 0
         time.sleep(0.010)
-        self.res.value = 1
+        self.reset_pin.value = 1
