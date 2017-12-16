@@ -131,7 +131,14 @@ class _SSD1306:
         self.framebuf.text(string, xpos, ypos, col)
 
 class SSD1306_I2C(_SSD1306):
-    """ I2C class for SSD1306
+    """
+    I2C class for SSD1306
+
+    :param width: the width of the physical screen in pixels,
+    :param height: the height of the physical screen in pixels,
+    :param i2c: the I2C peripheral to use,
+    :param addr: the 8-bit bus address of the device,
+    :param external_vcc: whether external high-voltage source is connected.
     """
 
     def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False):
@@ -167,7 +174,15 @@ class SSD1306_I2C(_SSD1306):
 
 #pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
-    """ SPI class for SSD1306
+    """
+    SPI class for SSD1306
+
+    :param width: the width of the physical screen in pixels,
+    :param height: the height of the physical screen in pixels,
+    :param spi: the SPI peripheral to use,
+    :param dc: the data/command pin to use (often labeled "D/C"),
+    :param res: the reset pin to use,
+    :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
     def __init__(self, width, height, spi, dc, res, cs, *,
                  external_vcc=False, baudrate=8000000, polarity=0, phase=0):
@@ -176,28 +191,28 @@ class SSD1306_SPI(_SSD1306):
         res.switch_to_output(value=0)
         self.spi_device = spi_device.SPIDevice(spi, cs, baudrate=baudrate,
                                                polarity=polarity, phase=phase)
-        self.d_or_c = dc
-        self.res = res
+        self.dc_pin = dc
+        self.reset_pin = res
         self.buffer = bytearray((height // 8) * width)
         framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
         super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
-        self.d_or_c.value = 0
+        self.dc_pin.value = 0
         with self.spi_device as spi:
             spi.write(bytearray([cmd]))
 
     def write_framebuf(self):
         """write to the frame buffer via SPI"""
-        self.d_or_c.value = 1
+        self.dc_pin.value = 1
         with self.spi_device as spi:
             spi.write(self.buffer)
 
     def poweron(self):
         """Turn power off on the device"""
-        self.res.value = 1
+        self.reset_pin.value = 1
         time.sleep(0.001)
-        self.res.value = 0
+        self.reset_pin.value = 0
         time.sleep(0.010)
-        self.res.value = 1
+        self.reset_pin.value = 1
