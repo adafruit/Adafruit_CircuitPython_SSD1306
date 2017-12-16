@@ -133,7 +133,7 @@ class _SSD1306:
 class SSD1306_I2C(_SSD1306):
     """
     I2C class for SSD1306
-    
+
     :param width: the width of the physical screen in pixels,
     :param height: the height of the physical screen in pixels,
     :param i2c: the I2C peripheral to use,
@@ -176,7 +176,7 @@ class SSD1306_I2C(_SSD1306):
 class SSD1306_SPI(_SSD1306):
     """
     SPI class for SSD1306
-    
+
     :param width: the width of the physical screen in pixels,
     :param height: the height of the physical screen in pixels,
     :param spi: the SPI peripheral to use,
