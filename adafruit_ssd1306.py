@@ -185,14 +185,14 @@ class SSD1306_SPI(_SSD1306):
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
         self.d_or_c.value = 0
-        with self.spi_device:
-            self.spi_device.write(bytearray([cmd]))
+        with self.spi_device as spi:
+            spi.write(bytearray([cmd]))
 
     def write_framebuf(self):
         """write to the frame buffer via SPI"""
         self.d_or_c.value = 1
-        with self.spi_device:
-            self.spi_device.write(self.buffer)
+        with self.spi_device as spi:
+            spi.write(self.buffer)
 
     def poweron(self):
         """Turn power off on the device"""
