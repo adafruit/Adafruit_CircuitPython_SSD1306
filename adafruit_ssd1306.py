@@ -131,7 +131,14 @@ class _SSD1306:
         self.framebuf.text(string, xpos, ypos, col)
 
 class SSD1306_I2C(_SSD1306):
-    """ I2C class for SSD1306
+    """
+    I2C class for SSD1306
+    
+    :param width: the width of the physical screen in pixels,
+    :param height: the height of the physical screen in pixels,
+    :param i2c: the I2C peripheral to use,
+    :param addr: the 8-bit bus address of the device,
+    :param external_vcc: whether external high-voltage source is connected.
     """
 
     def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False):
@@ -167,7 +174,15 @@ class SSD1306_I2C(_SSD1306):
 
 #pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
-    """ SPI class for SSD1306
+    """
+    SPI class for SSD1306
+    
+    :param width: the width of the physical screen in pixels,
+    :param height: the height of the physical screen in pixels,
+    :param spi: the SPI peripheral to use,
+    :param dc: the data/command pin to use (often labeled "D/C"),
+    :param res: the reset pin to use,
+    :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
     def __init__(self, width, height, spi, dc, res, cs, *,
                  external_vcc=False, baudrate=8000000, polarity=0, phase=0):
