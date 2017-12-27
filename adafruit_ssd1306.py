@@ -130,6 +130,12 @@ class _SSD1306:
         """Place text on display"""
         self.framebuf.text(string, xpos, ypos, col)
 
+    #pylint: disable-msg=too-many-arguments
+    def line(self, xpos0, ypos0, xpos1, ypos1, col=1):
+        """Draw a line from initial to final point"""
+        self.framebuf.line(xpos0, ypos0, xpos1, ypos1, col)
+    #pylint: disable-msg=too-many-arguments
+
 class SSD1306_I2C(_SSD1306):
     """
     I2C class for SSD1306
