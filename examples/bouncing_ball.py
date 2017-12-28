@@ -12,6 +12,8 @@ oled = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
 
 
 # Helper function to draw a circle from a given position with a given radius
+# This is an implementation of the midpoint circle algorithm,
+# see https://en.wikipedia.org/wiki/Midpoint_circle_algorithm#C_example for details
 def draw_circle(xpos0, ypos0, rad, col=1):
     x = rad - 1
     y = 0
@@ -36,11 +38,14 @@ def draw_circle(xpos0, ypos0, rad, col=1):
             dx += 2
             err += dx - (rad << 1)
 
+# initial center of the circle
 center_x = 63
 center_y = 15
+# how fast does it move in each direction
 x_inc = 1
 y_inc = 1
-radius = 5
+# what is the starting radius of the circle
+radius = 8
 
 # start with a blank screen
 oled.fill(0)
