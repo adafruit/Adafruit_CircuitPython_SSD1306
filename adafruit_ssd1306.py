@@ -33,6 +33,7 @@ SET_CHARGE_PUMP     = const(0x8d)
 
 class _SSD1306:
     """Base class for SSD1306 display driver"""
+    #pylint: disable-msg=too-many-arguments
     def __init__(self, framebuffer, width, height, external_vcc, reset):
         self.framebuf = framebuffer
         self.width = width
@@ -78,7 +79,7 @@ class _SSD1306:
         self.show()
 
     def poweroff(self):
-        """Turn the device Power off"""
+        """Turn off the display (nothing visible)"""
         self.write_cmd(SET_DISP | 0x00)
 
     def contrast(self, contrast):
@@ -87,7 +88,7 @@ class _SSD1306:
         self.write_cmd(contrast)
 
     def invert(self, invert):
-        """Invert the pixels on the display"""
+        """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
     def write_framebuf(self):
@@ -99,6 +100,7 @@ class _SSD1306:
         raise NotImplementedError
 
     def poweron(self):
+        "Reset device and turn on the display."
         if self.reset_pin:
             self.reset_pin.value = 1
             time.sleep(0.001)
@@ -125,7 +127,7 @@ class _SSD1306:
         self.write_framebuf()
 
     def fill(self, value):
-        """Fill the display on or off"""
+        """Fill the display with all ones or zeros."""
         self.framebuf.fill(value)
 
     def pixel(self, xpos, ypos, value):
