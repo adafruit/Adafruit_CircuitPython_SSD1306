@@ -33,11 +33,16 @@ SET_CHARGE_PUMP     = const(0x8d)
 
 class _SSD1306:
     """Base class for SSD1306 display driver"""
-    def __init__(self, framebuffer, width, height, external_vcc):
+    #pylint: disable-msg=too-many-arguments
+    def __init__(self, framebuffer, width, height, external_vcc, reset):
         self.framebuf = framebuffer
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
+        # reset may be None if not needed
+        self.reset_pin = reset
+        if self.reset_pin:
+            self.reset_pin.switch_to_output(value=0)
         self.pages = self.height // 8
         # Note the subclass must initialize self.framebuf to a framebuffer.
         # This is necessary because the underlying data buffer is different
@@ -74,7 +79,7 @@ class _SSD1306:
         self.show()
 
     def poweroff(self):
-        """Turn the device Power off"""
+        """Turn off the display (nothing visible)"""
         self.write_cmd(SET_DISP | 0x00)
 
     def contrast(self, contrast):
@@ -83,7 +88,7 @@ class _SSD1306:
         self.write_cmd(contrast)
 
     def invert(self, invert):
-        """Invert the pixels on the display"""
+        """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
     def write_framebuf(self):
@@ -95,8 +100,15 @@ class _SSD1306:
         raise NotImplementedError
 
     def poweron(self):
-        """Derived class must implement this"""
-        raise NotImplementedError
+        "Reset device and turn on the display."
+        if self.reset_pin:
+            self.reset_pin.value = 1
+            time.sleep(0.001)
+            self.reset_pin.value = 0
+            time.sleep(0.010)
+            self.reset_pin.value = 1
+            time.sleep(0.010)
+        self.write_cmd(SET_DISP | 0x01)
 
     def show(self):
         """Update the display"""
@@ -115,7 +127,7 @@ class _SSD1306:
         self.write_framebuf()
 
     def fill(self, value):
-        """Fill the display on or off"""
+        """Fill the display with all ones or zeros."""
         self.framebuf.fill(value)
 
     def pixel(self, xpos, ypos, value):
@@ -139,9 +151,10 @@ class SSD1306_I2C(_SSD1306):
     :param i2c: the I2C peripheral to use,
     :param addr: the 8-bit bus address of the device,
     :param external_vcc: whether external high-voltage source is connected.
+    :param reset: if needed, DigitalInOut designating reset pin
     """
 
-    def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False):
+    def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False, reset=None):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
         self.temp = bytearray(2)
@@ -153,7 +166,7 @@ class SSD1306_I2C(_SSD1306):
         self.buffer = bytearray(((height // 8) * width) + 1)
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
         framebuffer = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
-        super().__init__(framebuffer, width, height, external_vcc)
+        super().__init__(framebuffer, width, height, external_vcc, reset)
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
@@ -168,10 +181,6 @@ class SSD1306_I2C(_SSD1306):
         with self.i2c_device:
             self.i2c_device.write(self.buffer)
 
-    def poweron(self):
-        """Turn power on the device"""
-        self.write_cmd(SET_DISP | 0x01)
-
 #pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
     """
@@ -181,21 +190,19 @@ class SSD1306_SPI(_SSD1306):
     :param height: the height of the physical screen in pixels,
     :param spi: the SPI peripheral to use,
     :param dc: the data/command pin to use (often labeled "D/C"),
-    :param res: the reset pin to use,
+    :param reset: the reset pin to use,
     :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
-    def __init__(self, width, height, spi, dc, res, cs, *,
+    def __init__(self, width, height, spi, dc, reset, cs, *,
                  external_vcc=False, baudrate=8000000, polarity=0, phase=0):
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
-        res.switch_to_output(value=0)
         self.spi_device = spi_device.SPIDevice(spi, cs, baudrate=baudrate,
                                                polarity=polarity, phase=phase)
         self.dc_pin = dc
-        self.reset_pin = res
         self.buffer = bytearray((height // 8) * width)
         framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
-        super().__init__(framebuffer, width, height, external_vcc)
+        super().__init__(framebuffer, width, height, external_vcc, reset)
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
@@ -208,11 +215,3 @@ class SSD1306_SPI(_SSD1306):
         self.dc_pin.value = 1
         with self.spi_device as spi:
             spi.write(self.buffer)
-
-    def poweron(self):
-        """Turn power off on the device"""
-        self.reset_pin.value = 1
-        time.sleep(0.001)
-        self.reset_pin.value = 0
-        time.sleep(0.010)
-        self.reset_pin.value = 1
