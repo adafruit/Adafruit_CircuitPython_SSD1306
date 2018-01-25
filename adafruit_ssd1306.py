@@ -191,7 +191,7 @@ class SSD1306_SPI(_SSD1306):
         self.dc_pin = dc
         self.reset_pin = res
         self.buffer = bytearray((height // 8) * width)
-        framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
+        framebuffer = framebuf.FrameBuffer(self.buffer, width, height)
         super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
