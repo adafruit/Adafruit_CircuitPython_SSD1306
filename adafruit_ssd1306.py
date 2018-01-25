@@ -35,6 +35,19 @@ class _SSD1306:
     """Base class for SSD1306 display driver"""
     def __init__(self, framebuffer, width, height, external_vcc):
         self.framebuf = framebuffer
+        # note this is a breaking change:
+        # previously these functions were wrapped
+        # with a default color of "1"
+        self.fill = self.framebuf.fill
+        self.pixel = self.framebuf.pixel
+        self.line = self.framebuf.line
+        self.text = self.framebuf.text
+        self.scroll = self.framebuf.scroll
+        self.blit = self.framebuf.blit
+        self.vline = self.framebuf.vline
+        self.hline = self.framebuf.hline
+        self.fill_rect = self.framebuf.fill_rect
+
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
@@ -114,28 +127,6 @@ class _SSD1306:
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
 
-    def fill(self, value):
-        """Fill the display on or off"""
-        self.framebuf.fill(value)
-
-    def pixel(self, xpos, ypos, value):
-        """Set a pixel to on or off at x,y"""
-        self.framebuf.pixel(xpos, ypos, value)
-
-    def scroll(self, deltax, deltay):
-        """Scroll the display content by delta x,y"""
-        self.framebuf.scroll(deltax, deltay)
-
-    def text(self, string, xpos, ypos, col=1):
-        """Place text on display"""
-        self.framebuf.text(string, xpos, ypos, col)
-
-    #pylint: disable-msg=too-many-arguments
-    def line(self, xpos0, ypos0, xpos1, ypos1, col=1):
-        """Draw a line from initial to final point"""
-        self.framebuf.line(xpos0, ypos0, xpos1, ypos1, col)
-    #pylint: disable-msg=too-many-arguments
-
 class SSD1306_I2C(_SSD1306):
     """
     I2C class for SSD1306
@@ -158,7 +149,7 @@ class SSD1306_I2C(_SSD1306):
         # buffer).
         self.buffer = bytearray(((height // 8) * width) + 1)
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
-        framebuffer = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
+        framebuffer = framebuf.FrameBuffer(memoryview(self.buffer)[1:], width, height)
         super().__init__(framebuffer, width, height, external_vcc)
 
     def write_cmd(self, cmd):
