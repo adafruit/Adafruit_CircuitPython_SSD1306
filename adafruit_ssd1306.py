@@ -34,8 +34,18 @@ SET_CHARGE_PUMP     = const(0x8d)
 class _SSD1306:
     """Base class for SSD1306 display driver"""
     #pylint: disable-msg=too-many-arguments
+    #pylint: disable-msg=too-many-instance-attributes
     def __init__(self, framebuffer, width, height, external_vcc, reset):
         self.framebuf = framebuffer
+        self.fill = self.framebuf.fill
+        self.pixel = self.framebuf.pixel
+        self.line = self.framebuf.line
+        self.text = self.framebuf.text
+        self.scroll = self.framebuf.scroll
+        self.blit = self.framebuf.blit
+        self.vline = self.framebuf.vline
+        self.hline = self.framebuf.hline
+        self.fill_rect = self.framebuf.fill_rect
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
@@ -125,22 +135,6 @@ class _SSD1306:
         self.write_cmd(0)
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
-
-    def fill(self, value):
-        """Fill the display with all ones or zeros."""
-        self.framebuf.fill(value)
-
-    def pixel(self, xpos, ypos, value):
-        """Set a pixel to on or off at x,y"""
-        self.framebuf.pixel(xpos, ypos, value)
-
-    def scroll(self, deltax, deltay):
-        """Scroll the display content by delta x,y"""
-        self.framebuf.scroll(deltax, deltay)
-
-    def text(self, string, xpos, ypos, col=1):
-        """Place text on display"""
-        self.framebuf.text(string, xpos, ypos, col)
 
 class SSD1306_I2C(_SSD1306):
     """
