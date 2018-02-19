@@ -23,14 +23,12 @@ Table of Contents
 .. toctree::
     :caption: Tutorials
 
-.. todo:: Add any Learn guide links here. If there are none, then simply delete this todo and leave
-    the toctree above for use later.
+    CircuitPython Hardware: SSD1306 OLED Display <https://learn.adafruit.com/micropython-hardware-ssd1306-oled-display>
 
 .. toctree::
     :caption: Related Products
 
-.. todo:: Add any product links here. If there are none, then simply delete this todo and leave
-    the toctree above for use later.
+    Several SSD1306-based products <https://www.adafruit.com/?q=ssd1306>
 
 .. toctree::
     :caption: Other Links
