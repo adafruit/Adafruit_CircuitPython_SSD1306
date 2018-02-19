@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_SSD1306`
+`adafruit_ssd1306`
 ====================================================
 
 MicroPython SSD1306 OLED driver, I2C and SPI interfaces
