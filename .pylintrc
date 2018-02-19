@@ -119,7 +119,8 @@ spelling-store-unknown-words=no
 [MISCELLANEOUS]
 
 # List of note tags to take in consideration, separated by a comma.
-notes=FIXME,XXX,TODO
+# notes=FIXME,XXX,TODO
+notes=FIXME,XXX
 
 
 [TYPECHECK]
@@ -300,7 +301,7 @@ function-rgx=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
 
 # Good variable names which should always be accepted, separated by a comma
 # good-names=i,j,k,ex,Run,_
-good-names=r,g,b,i,j,k,n,ex,Run,_
+good-names=r,g,b,w,i,j,k,n,x,y,z,ex,ok,Run,_
 
 # Include a hint for the correct naming format with invalid-name
 include-naming-hint=no
@@ -422,7 +423,7 @@ max-returns=6
 max-statements=50
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=1
 
 
 [EXCEPTIONS]
