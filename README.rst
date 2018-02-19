@@ -13,11 +13,11 @@ Introduction
     :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_SSD1306
     :alt: Build Status
 
-    Adafruit CircuitPython driver for SSD1306 OLED displays.
+Adafruit CircuitPython driver for SSD1306 OLED displays.
 
-    This driver is based on the SSD1306 driver in the MicroPython source but differs
-    by supporting hardware I2C interfaces and Adafruit CircuitPython API.  For a
-    MicroPython machine API compatible library see: https://github.com/adafruit/micropython-adafruit-ssd1306
+This driver is based on the SSD1306 driver in the MicroPython source but differs
+by supporting hardware I2C interfaces and Adafruit CircuitPython API.  For a
+MicroPython machine API compatible library see: https://github.com/adafruit/micropython-adafruit-ssd1306
 
 
 Dependencies
