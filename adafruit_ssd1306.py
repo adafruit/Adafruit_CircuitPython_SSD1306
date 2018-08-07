@@ -31,8 +31,8 @@ MicroPython SSD1306 OLED driver, I2C and SPI interfaces
 import time
 import framebuf
 
-from adafruit_bus_device import i2c_device, spi_device
 from micropython import const
+from adafruit_bus_device import i2c_device, spi_device
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
@@ -215,6 +215,8 @@ class SSD1306_SPI(_SSD1306):
     :param reset: the reset pin to use,
     :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
+    # pylint: disable=no-member
+    # Disable should be reconsidered when refactor can be tested.
     def __init__(self, width, height, spi, dc, reset, cs, *,
                  external_vcc=False, baudrate=8000000, polarity=0, phase=0):
         self.rate = 10 * 1024 * 1024
