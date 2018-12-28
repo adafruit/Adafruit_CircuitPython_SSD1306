@@ -62,22 +62,11 @@ SET_CHARGE_PUMP     = const(0x8d)
 #pylint: enable-msg=bad-whitespace
 
 
-class _SSD1306:
+class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
     #pylint: disable-msg=too-many-arguments
-    #pylint: disable-msg=too-many-instance-attributes
-    def __init__(self, framebuffer, width, height, *, external_vcc, reset):
-        self.framebuf = framebuffer
-        self.fill = self.framebuf.fill
-        self.pixel = self.framebuf.pixel
-        self.line = self.framebuf.line
-        self.text = self.framebuf.text
-        self.scroll = self.framebuf.scroll
-        self.blit = self.framebuf.blit
-        self.vline = self.framebuf.vline
-        self.hline = self.framebuf.hline
-        self.fill_rect = self.framebuf.fill_rect
-        self.rect = self.framebuf.rect
+    def __init__(self, buffer, width, height, *, external_vcc, reset):
+        super().__init__(buffer, width, height)
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
@@ -191,8 +180,7 @@ class SSD1306_I2C(_SSD1306):
         # buffer).
         self.buffer = bytearray(((height // 8) * width) + 1)
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
-        framebuffer = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
-        super().__init__(framebuffer, width, height,
+        super().__init__(memoryview(self.buffer)[1:], width, height,
                          external_vcc=external_vcc, reset=reset)
 
     def write_cmd(self, cmd):
@@ -230,8 +218,7 @@ class SSD1306_SPI(_SSD1306):
                                                polarity=polarity, phase=phase)
         self.dc_pin = dc
         self.buffer = bytearray((height // 8) * width)
-        framebuffer = framebuf.FrameBuffer1(self.buffer, width, height)
-        super().__init__(framebuffer, width, height,
+        super().__init__(memoryview(self.buffer), width, height,
                          external_vcc=external_vcc, reset=reset)
 
     def write_cmd(self, cmd):
