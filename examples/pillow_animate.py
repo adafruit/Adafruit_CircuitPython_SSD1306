@@ -18,21 +18,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+
 import math
 import time
+from PIL import Image, ImageDraw, ImageFont
 
 from board import SCL, SDA
 import busio
 import adafruit_ssd1306
 
-from PIL import Image, ImageDraw, ImageFont
-
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
 
 # Create the SSD1306 OLED class.
-# The first two parameters are the pixel width and pixel height.  Change these
-# to the right size for your display!
+# The first two parameters are the pixel width and pixel height.
+# Change these to the right size for your display!
 disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
 
 # Note you can change the I2C address, or add a reset pin:
@@ -53,7 +53,8 @@ image = Image.new('1', (width, height))
 # Load default font.
 font = ImageFont.load_default()
 
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the same directory as this python script!
+# Alternatively load a TTF font.  Make sure the .ttf font file is in the
+# same directory as this python script!
 # Some nice fonts to try: http://www.dafont.com/bitmap.php
 # font = ImageFont.truetype('Minecraftia.ttf', 8)
 
@@ -61,7 +62,8 @@ font = ImageFont.load_default()
 draw = ImageDraw.Draw(image)
 
 # Define text and get total width.
-text = 'SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!! GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH'
+text = 'SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!!'+\
+       'GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH'
 maxwidth, unused = draw.textsize(text, font=font)
 
 # Set animation and sine wave parameters.
@@ -75,7 +77,7 @@ print('Press Ctrl-C to quit.')
 pos = startpos
 while True:
     # Clear image buffer by drawing a black filled box.
-    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
     # Enumerate characters and draw them offset vertically based on a sine wave.
     x = pos
     for i, c in enumerate(text):

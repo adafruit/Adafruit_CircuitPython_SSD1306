@@ -25,14 +25,14 @@
 # not support PIL/pillow (python imaging library)!
 
 import time
+import subprocess
+from PIL import Image, ImageDraw, ImageFont
 
 from board import SCL, SDA
 import busio
 import adafruit_ssd1306
 
-from PIL import Image, ImageDraw, ImageFont
 
-import subprocess
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
@@ -56,7 +56,7 @@ image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 
 # Draw a black filled box to clear the image.
-draw.rectangle((0,0,width,height), outline=0, fill=0)
+draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 # Draw some shapes.
 # First define some constants to allow easy resizing of shapes.
@@ -70,31 +70,33 @@ x = 0
 # Load default font.
 font = ImageFont.load_default()
 
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the same directory as the python script!
+# Alternatively load a TTF font.  Make sure the .ttf font file is in the
+# same directory as the python script!
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 #font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 9)
 
 while True:
 
     # Draw a black filled box to clear the image.
-    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    # Shell scripts for system monitoring from here : https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
+    # Shell scripts for system monitoring from here:
+    # https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
     cmd = "hostname -I | cut -d\' \' -f1"
-    IP = subprocess.check_output(cmd, shell = True ).decode("utf-8")
+    IP = subprocess.check_output(cmd, shell=True).decode("utf-8")
     cmd = "top -bn1 | grep load | awk '{printf \"CPU Load: %.2f\", $(NF-2)}'"
-    CPU = subprocess.check_output(cmd, shell = True ).decode("utf-8")
+    CPU = subprocess.check_output(cmd, shell=True).decode("utf-8")
     cmd = "free -m | awk 'NR==2{printf \"Mem: %s/%s MB  %.2f%%\", $3,$2,$3*100/$2 }'"
-    MemUsage = subprocess.check_output(cmd, shell = True ).decode("utf-8")
+    MemUsage = subprocess.check_output(cmd, shell=True).decode("utf-8")
     cmd = "df -h | awk '$NF==\"/\"{printf \"Disk: %d/%d GB  %s\", $3,$2,$5}'"
-    Disk = subprocess.check_output(cmd, shell = True ).decode("utf-8")
+    Disk = subprocess.check_output(cmd, shell=True).decode("utf-8")
 
     # Write four lines of text.
 
-    draw.text((x, top+0),       "IP: " + str(IP),  font=font, fill=255)
-    draw.text((x, top+8),     str(CPU), font=font, fill=255)
-    draw.text((x, top+16),    str(MemUsage),  font=font, fill=255)
-    draw.text((x, top+25),    str(Disk),  font=font, fill=255)
+    draw.text((x, top+0), "IP: "+IP, font=font, fill=255)
+    draw.text((x, top+8), CPU, font=font, fill=255)
+    draw.text((x, top+16), MemUsage, font=font, fill=255)
+    draw.text((x, top+25), Disk, font=font, fill=255)
 
     # Display image.
     disp.image(image)

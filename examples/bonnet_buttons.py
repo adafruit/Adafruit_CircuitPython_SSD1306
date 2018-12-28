@@ -19,13 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from PIL import Image, ImageDraw
 
-import time
 import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 import adafruit_ssd1306
-from PIL import Image, ImageDraw, ImageFont
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -36,18 +35,31 @@ disp = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
 
 # Input pins:
 button_A = DigitalInOut(board.D5)
+button_A.direction = Direction.INPUT
 button_A.pull = Pull.UP
+
 button_B = DigitalInOut(board.D6)
+button_B.direction = Direction.INPUT
 button_B.pull = Pull.UP
+
 button_L = DigitalInOut(board.D27)
+button_L.direction = Direction.INPUT
 button_L.pull = Pull.UP
+
 button_R = DigitalInOut(board.D23)
+button_R.direction = Direction.INPUT
 button_R.pull = Pull.UP
+
 button_U = DigitalInOut(board.D17)
+button_U.direction = Direction.INPUT
 button_U.pull = Pull.UP
+
 button_D = DigitalInOut(board.D22)
+button_D.direction = Direction.INPUT
 button_D.pull = Pull.UP
+
 button_C = DigitalInOut(board.D4)
+button_C.direction = Direction.INPUT
 button_C.pull = Pull.UP
 
 
@@ -65,7 +77,7 @@ image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 
 # Draw a black filled box to clear the image.
-draw.rectangle((0,0,width,height), outline=0, fill=0)
+draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 
 while True:
@@ -90,19 +102,19 @@ while True:
         draw.polygon([(30, 60), (40, 42), (20, 42)], outline=255, fill=1) #down filled
 
     if button_C.value: # button is released
-        draw.rectangle((20, 22,40,40), outline=255, fill=0) #center 
+        draw.rectangle((20, 22, 40, 40), outline=255, fill=0) #center
     else: # button is pressed:
-        draw.rectangle((20, 22,40,40), outline=255, fill=1) #center filled
+        draw.rectangle((20, 22, 40, 40), outline=255, fill=1) #center filled
 
     if button_A.value: # button is released
-        draw.ellipse((70,40,90,60), outline=255, fill=0) #A button
+        draw.ellipse((70, 40, 90, 60), outline=255, fill=0) #A button
     else: # button is pressed:
-        draw.ellipse((70,40,90,60), outline=255, fill=1) #A button filled
+        draw.ellipse((70, 40, 90, 60), outline=255, fill=1) #A button filled
 
     if button_B.value: # button is released
-        draw.ellipse((100,20,120,40), outline=255, fill=0) #B button
+        draw.ellipse((100, 20, 120, 40), outline=255, fill=0) #B button
     else: # button is pressed:
-        draw.ellipse((100,20,120,40), outline=255, fill=1) #B button filled
+        draw.ellipse((100, 20, 120, 40), outline=255, fill=1) #B button filled
 
     if not button_A.value and not button_B.value and not button_C.value:
         catImage = Image.open('happycat_oled_64.ppm').convert('1')

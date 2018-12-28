@@ -18,17 +18,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-import time
 
-import time
+from PIL import Image
 
 from board import SCL, SDA
 import busio
 import adafruit_ssd1306
-
-from PIL import Image, ImageDraw, ImageFont
-
-import subprocess
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)

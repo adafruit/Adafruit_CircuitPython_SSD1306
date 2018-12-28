@@ -18,14 +18,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-import time
+
+from PIL import Image, ImageDraw, ImageFont
 
 from board import SCL, SDA
 import busio
 import adafruit_ssd1306
-
-from PIL import Image, ImageDraw, ImageFont
-
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
@@ -52,7 +50,7 @@ image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 
 # Draw a black filled box to clear the image.
-draw.rectangle((0,0,width,height), outline=0, fill=0)
+draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 # Draw some shapes.
 # First define some constants to allow easy resizing of shapes.
@@ -63,7 +61,7 @@ bottom = height-padding
 # Move left to right keeping track of the current x position for drawing shapes.
 x = padding
 # Draw an ellipse.
-draw.ellipse((x, top , x+shape_width, bottom), outline=255, fill=0)
+draw.ellipse((x, top, x+shape_width, bottom), outline=255, fill=0)
 x += shape_width+padding
 # Draw a rectangle.
 draw.rectangle((x, top, x+shape_width, bottom), outline=255, fill=0)
@@ -79,12 +77,13 @@ x += shape_width+padding
 # Load default font.
 font = ImageFont.load_default()
 
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the same directory as the python script!
+# Alternatively load a TTF font.  Make sure the .ttf font file is in the
+# same directory as the python script!
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 #font = ImageFont.truetype('Minecraftia.ttf', 8)
 
 # Write two lines of text.
-draw.text((x, top),    'Hello',  font=font, fill=255)
+draw.text((x, top), 'Hello', font=font, fill=255)
 draw.text((x, top+20), 'World!', font=font, fill=255)
 
 # Display image.
