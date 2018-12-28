@@ -1,2 +1,3 @@
 Adafruit-Blinka
 adafruit-circuitpython-busdevice
+adafruit-circuitpython-framebuf

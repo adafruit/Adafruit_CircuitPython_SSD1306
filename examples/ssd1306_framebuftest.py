@@ -23,7 +23,7 @@ reset_pin = DigitalInOut(board.D5)
 # to the right size for your display!
 # The I2C address for these displays is 0x3d or 0x3c, change to match
 # A reset line may be required if there is no auto-reset circuitry
-display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3d, reset=reset_pin)
+display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3c, reset=reset_pin)
 
 print("Framebuf capability test - these are slow and minimal but don't require"
       "a special graphics management library, only `adafruit_framebuf`")
@@ -67,12 +67,20 @@ time.sleep(0.1)
 
 print("Text test")
 display.fill(0)
-display.text('hello world', 0, 0, 1)
-char_width = 6
-char_height = 8
-chars_per_line = display.width//6
-for i in range(255):
-    x = char_width * (i % chars_per_line)
-    y = char_height * (i // chars_per_line)
-    display.text(chr(i), x, y, 1)
-display.show()
+try:
+    display.text('hello world', 0, 0, 1)
+    display.show()
+    time.sleep(1)
+    display.fill(0)
+    char_width = 6
+    char_height = 8
+    chars_per_line = display.width//6
+    for i in range(255):
+        x = char_width * (i % chars_per_line)
+        y = char_height * (i // chars_per_line)
+        display.text(chr(i), x, y, 1)
+    display.show()
+except FileNotFoundError:
+    print("To test the framebuf font setup, you'll need the font5x8.bin file from " +
+          "https://github.com/adafruit/Adafruit_CircuitPython_framebuf/tree/master/examples" +
+          " in the same directory as this script")
