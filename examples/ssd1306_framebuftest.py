@@ -23,7 +23,7 @@ reset_pin = DigitalInOut(board.D5)
 # to the right size for your display!
 # The I2C address for these displays is 0x3d or 0x3c, change to match
 # A reset line may be required if there is no auto-reset circuitry
-display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3d, reset=reset_pin)
+display = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3c, reset=reset_pin)
 
 print("Framebuf capability test - these are slow and minimal but don't require"
       "a special graphics management library, only `adafruit_framebuf`")
