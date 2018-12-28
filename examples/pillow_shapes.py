@@ -19,10 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from PIL import Image, ImageDraw, ImageFont
-
 from board import SCL, SDA
 import busio
+from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
 # Create the I2C interface.
