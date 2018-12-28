@@ -19,11 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from PIL import Image, ImageDraw
-
 import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
+from PIL import Image, ImageDraw
 import adafruit_ssd1306
 
 # Create the I2C interface.
