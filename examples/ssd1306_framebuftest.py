@@ -67,12 +67,20 @@ time.sleep(0.1)
 
 print("Text test")
 display.fill(0)
-display.text('hello world', 0, 0, 1)
-char_width = 6
-char_height = 8
-chars_per_line = display.width//6
-for i in range(255):
-    x = char_width * (i % chars_per_line)
-    y = char_height * (i // chars_per_line)
-    display.text(chr(i), x, y, 1)
-display.show()
+try:
+    display.text('hello world', 0, 0, 1)
+    display.show()
+    time.sleep(1)
+    display.fill(0)
+    char_width = 6
+    char_height = 8
+    chars_per_line = display.width//6
+    for i in range(255):
+        x = char_width * (i % chars_per_line)
+        y = char_height * (i // chars_per_line)
+        display.text(chr(i), x, y, 1)
+    display.show()
+except FileNotFoundError:
+    print("To test the framebuf font setup, you'll need the font5x8.bin file from " +
+          "https://github.com/adafruit/Adafruit_CircuitPython_framebuf/tree/master/examples" +
+          " in the same directory as this script")
