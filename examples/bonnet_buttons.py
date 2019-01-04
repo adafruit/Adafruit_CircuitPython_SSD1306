@@ -19,6 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# This example is for use on (Linux) computers that are using CPython with
+# Adafruit Blinka to support CircuitPython libraries. CircuitPython does
+# not support PIL/pillow (python imaging library)!
+
 import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
