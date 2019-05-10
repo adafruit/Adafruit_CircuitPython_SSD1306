@@ -3,6 +3,6 @@ Simple test
 
 Ensure your device works with this simple test.
 
-.. literalinclude:: ../examples/simpletest.py
-    :caption: examples/simpletest.py
+.. literalinclude:: ../examples/ssd1306_simpletest.py
+    :caption: examples/ssd1306_simpletest.py
     :linenos:
