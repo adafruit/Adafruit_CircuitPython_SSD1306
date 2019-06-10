@@ -84,6 +84,7 @@ class _SSD1306(framebuf.FrameBuffer):
 
     @property
     def power(self):
+	"""True if the display is currently powered on, otherwise False"""
         return self._power
 
     def init_display(self):
