@@ -240,4 +240,3 @@ class SSD1306_SPI(_SSD1306):
         self.dc_pin.value = 1
         with self.spi_device as spi:
             spi.write(self.buffer)
-
