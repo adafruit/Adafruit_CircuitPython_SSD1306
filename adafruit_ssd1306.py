@@ -78,8 +78,13 @@ class _SSD1306(framebuf.FrameBuffer):
         # Note the subclass must initialize self.framebuf to a framebuffer.
         # This is necessary because the underlying data buffer is different
         # between I2C and SPI implementations (I2C needs an extra byte).
+        self._power = False
         self.poweron()
         self.init_display()
+
+    @property
+    def power(self):
+        return self._power
 
     def init_display(self):
         """Base class to initialize display"""
@@ -112,6 +117,7 @@ class _SSD1306(framebuf.FrameBuffer):
     def poweroff(self):
         """Turn off the display (nothing visible)"""
         self.write_cmd(SET_DISP | 0x00)
+        self._power = False
 
     def contrast(self, contrast):
         """Adjust the contrast"""
@@ -140,6 +146,7 @@ class _SSD1306(framebuf.FrameBuffer):
             self.reset_pin.value = 1
             time.sleep(0.010)
         self.write_cmd(SET_DISP | 0x01)
+        self._power = True
 
     def show(self):
         """Update the display"""
@@ -232,3 +239,4 @@ class SSD1306_SPI(_SSD1306):
         self.dc_pin.value = 1
         with self.spi_device as spi:
             spi.write(self.buffer)
+
