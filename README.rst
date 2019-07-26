@@ -15,9 +15,7 @@ Introduction
 
 Adafruit CircuitPython driver for SSD1306 or SSD1305 OLED displays. Note that SSD1305 displays are back compatible so they can be used in-place of SSD1306 with the same code and commands.
 
-This driver is based on the SSD1306 driver in the MicroPython source but differs
-by supporting hardware I2C interfaces and Adafruit CircuitPython API.  For a
-MicroPython machine API compatible library see: https://github.com/adafruit/micropython-adafruit-ssd1306
+This is **not** the `displayio` driver for the SSD1306. See the `Adafruit CircuitPython DisplayIO SSD1306 <https://github.com/adafruit/Adafruit_CircuitPython_DisplayIO_SSD1306/>`_ driver for `displayio` support.
 
 
 Dependencies
