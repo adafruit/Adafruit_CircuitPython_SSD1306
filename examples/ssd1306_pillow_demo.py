@@ -42,7 +42,8 @@ draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, oled.width, oled.height), outline=255, fill=255)
 
 # Draw a smaller inner rectangle
-draw.rectangle((BORDER, BORDER, oled.width - BORDER - 1, oled.height - BORDER - 1), outline=0, fill=0)
+draw.rectangle((BORDER, BORDER, oled.width - BORDER - 1, oled.height - BORDER - 1),
+               outline=0, fill=0)
 
 # Load default font.
 font = ImageFont.load_default()
@@ -50,7 +51,8 @@ font = ImageFont.load_default()
 # Draw Some Text
 text = "Hello World!"
 (font_width, font_height) = font.getsize(text)
-draw.text((oled.width//2 - font_width//2, oled.height//2 - font_height//2), text, font=font, fill=255)
+draw.text((oled.width//2 - font_width//2, oled.height//2 - font_height//2),
+          text, font=font, fill=255)
 
 # Display image
 oled.image(image)
