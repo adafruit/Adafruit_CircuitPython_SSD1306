@@ -22,10 +22,10 @@ i2c = board.I2C()
 oled = adafruit_ssd1306.SSD1306_I2C(WIDTH, HEIGHT, i2c, addr=0x3c, reset=oled_reset)
 
 # Use for SPI
-spi = board.SPI()
-oled_cs = digitalio.DigitalInOut(board.D5)
-oled_dc = digitalio.DigitalInOut(board.D6)
-oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, oled_dc, oled_reset, oled_cs)
+#spi = board.SPI()
+#oled_cs = digitalio.DigitalInOut(board.D5)
+#oled_dc = digitalio.DigitalInOut(board.D6)
+#oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, oled_dc, oled_reset, oled_cs)
 
 # Clear display.
 oled.fill(0)
