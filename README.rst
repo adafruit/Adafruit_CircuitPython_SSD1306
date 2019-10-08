@@ -15,7 +15,7 @@ Introduction
 
 Adafruit CircuitPython driver for SSD1306 or SSD1305 OLED displays. Note that SSD1305 displays are back compatible so they can be used in-place of SSD1306 with the same code and commands.
 
-This is **not** the `displayio` driver for the SSD1306. See the `Adafruit CircuitPython DisplayIO SSD1306 <https://github.com/adafruit/Adafruit_CircuitPython_DisplayIO_SSD1306/>`_ driver for `displayio` support.
+This driver implements the `adafruit_framebuf interface <https://circuitpython.readthedocs.io/projects/framebuf/en/latest/>`__. It is **not** the `displayio` driver for the SSD1306. See the `Adafruit CircuitPython DisplayIO SSD1306 <https://github.com/adafruit/Adafruit_CircuitPython_DisplayIO_SSD1306/>`_ driver for `displayio` support.
 
 
 Dependencies
@@ -63,6 +63,9 @@ Usage Example
   display.fill(0)
 
   display.show()
+
+
+More examples and details can be found in the `adafruit_framebuf docs <https://circuitpython.readthedocs.io/projects/framebuf/en/latest>`__.
 
 
 Contributing
