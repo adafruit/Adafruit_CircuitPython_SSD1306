@@ -22,18 +22,24 @@
 """
 `adafruit_ssd1306`
 ====================================================
+
 MicroPython SSD1306 OLED driver, I2C and SPI interfaces
+
 * Author(s): Tony DiCola, Michael McWethy
 """
+
 import time
+
 from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
 try:
     import framebuf
 except ImportError:
     import adafruit_framebuf as framebuf
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
+
 #pylint: disable-msg=bad-whitespace
 # register definitions
 SET_CONTRAST        = const(0x81)
@@ -54,6 +60,8 @@ SET_PRECHARGE       = const(0xd9)
 SET_VCOM_DESEL      = const(0xdb)
 SET_CHARGE_PUMP     = const(0x8d)
 #pylint: enable-msg=bad-whitespace
+
+
 class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
     #pylint: disable-msg=too-many-arguments
@@ -73,10 +81,12 @@ class _SSD1306(framebuf.FrameBuffer):
         self._power = False
         self.poweron()
         self.init_display()
+
     @property
     def power(self):
         """True if the display is currently powered on, otherwise False"""
         return self._power
+
     def init_display(self):
         """Base class to initialize display"""
         for cmd in (
@@ -107,23 +117,29 @@ class _SSD1306(framebuf.FrameBuffer):
             self.write_cmd(0x30)
         self.fill(0)
         self.show()
+
     def poweroff(self):
         """Turn off the display (nothing visible)"""
         self.write_cmd(SET_DISP | 0x00)
         self._power = False
+
     def contrast(self, contrast):
         """Adjust the contrast"""
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
+
     def invert(self, invert):
         """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
+
     def write_framebuf(self):
         """Derived class must implement this"""
         raise NotImplementedError
+
     def write_cmd(self, cmd):
         """Derived class must implement this"""
         raise NotImplementedError
+
     def poweron(self):
         "Reset device and turn on the display."
         if self.reset_pin:
@@ -135,6 +151,7 @@ class _SSD1306(framebuf.FrameBuffer):
             time.sleep(0.010)
         self.write_cmd(SET_DISP | 0x01)
         self._power = True
+
     def show(self):
         """Update the display"""
         xpos0 = 0
@@ -154,9 +171,11 @@ class _SSD1306(framebuf.FrameBuffer):
         self.write_cmd(0)
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
+
 class SSD1306_I2C(_SSD1306):
     """
     I2C class for SSD1306
+
     :param width: the width of the physical screen in pixels,
     :param height: the height of the physical screen in pixels,
     :param i2c: the I2C peripheral to use,
@@ -164,6 +183,7 @@ class SSD1306_I2C(_SSD1306):
     :param external_vcc: whether external high-voltage source is connected.
     :param reset: if needed, DigitalInOut designating reset pin
     """
+
     def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False, reset=None):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
@@ -177,21 +197,25 @@ class SSD1306_I2C(_SSD1306):
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
         super().__init__(memoryview(self.buffer)[1:], width, height,
                          external_vcc=external_vcc, reset=reset)
+
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
         self.temp[0] = 0x80 # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
             self.i2c_device.write(self.temp)
+
     def write_framebuf(self):
         """Blast out the frame buffer using a single I2C transaction to support
         hardware I2C interfaces."""
         with self.i2c_device:
             self.i2c_device.write(self.buffer)
+
 #pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
     """
     SPI class for SSD1306
+
     :param width: the width of the physical screen in pixels,
     :param height: the height of the physical screen in pixels,
     :param spi: the SPI peripheral to use,
@@ -211,12 +235,15 @@ class SSD1306_SPI(_SSD1306):
         self.buffer = bytearray((height // 8) * width)
         super().__init__(memoryview(self.buffer), width, height,
                          external_vcc=external_vcc, reset=reset)
+
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
         self.dc_pin.value = 0
         with self.spi_device as spi:
             spi.write(bytearray([cmd]))
+
     def write_framebuf(self):
         """write to the frame buffer via SPI"""
         self.dc_pin.value = 1
         with self.spi_device as spi:
+            spi.write(self.buffer)
