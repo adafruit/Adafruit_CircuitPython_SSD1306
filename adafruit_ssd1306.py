@@ -95,14 +95,14 @@ class _SSD1306(framebuf.FrameBuffer):
                 SET_MEM_ADDR, 0x00, # horizontal
                 # resolution and layout
                 SET_DISP_START_LINE | 0x00,
-                SET_SEG_REMAP | 0x00, # column addr 127 mapped to SEG0
+                SET_SEG_REMAP | 0x01, # column addr 127 mapped to SEG0
                 SET_MUX_RATIO, self.height - 1,
                 SET_COM_OUT_DIR | 0x08, # scan from COM[N] to COM0
                 SET_DISP_OFFSET, 0x00,
                 SET_COM_PIN_CFG, 0x02 if self.height == 32 or self.height == 16 else 0x12,
                 # timing and driving scheme
                 SET_DISP_CLK_DIV, 0x80,
-                SET_PRECHARGE, 0x22 if self.external_vcc else 0x22,
+                SET_PRECHARGE, 0x22 if self.external_vcc else 0xf1,
                 SET_VCOM_DESEL, 0x30, # 0.83*Vcc
                 # display
                 SET_CONTRAST, 0xff, # maximum
