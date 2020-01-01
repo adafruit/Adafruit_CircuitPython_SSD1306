@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_SSD1306.svg?branch=master
-    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_SSD1306
+.. image:: https://github.com/adafruit/Adafruit_CircuitPython_SSD1306/workflows/Build%20CI/badge.svg
+    :target: https://github.com/adafruit/Adafruit_CircuitPython_SSD1306/actions/
     :alt: Build Status
 
 Adafruit CircuitPython driver for SSD1306 or SSD1305 OLED displays. Note that SSD1305 displays are back compatible so they can be used in-place of SSD1306 with the same code and commands.
