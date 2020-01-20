@@ -99,7 +99,7 @@ class _SSD1306(framebuf.FrameBuffer):
                 SET_MUX_RATIO, self.height - 1,
                 SET_COM_OUT_DIR | 0x08, # scan from COM[N] to COM0
                 SET_DISP_OFFSET, 0x00,
-                SET_COM_PIN_CFG, 0x02 if self.height == 32 else 0x12,
+                SET_COM_PIN_CFG, 0x02 if self.height == 32 or self.height == 16 else 0x12,
                 # timing and driving scheme
                 SET_DISP_CLK_DIV, 0x80,
                 SET_PRECHARGE, 0x22 if self.external_vcc else 0xf1,
@@ -112,6 +112,9 @@ class _SSD1306(framebuf.FrameBuffer):
                 SET_CHARGE_PUMP, 0x10 if self.external_vcc else 0x14,
                 SET_DISP | 0x01): # on
             self.write_cmd(cmd)
+        if self.width == 72:
+            self.write_cmd(0xAD)
+            self.write_cmd(0x30)
         self.fill(0)
         self.show()
 
@@ -157,6 +160,10 @@ class _SSD1306(framebuf.FrameBuffer):
             # displays with width of 64 pixels are shifted by 32
             xpos0 += 32
             xpos1 += 32
+        if self.width == 72:
+            # displays with width of 72 pixels are shifted by 28
+            xpos0 += 28
+            xpos1 += 28
         self.write_cmd(SET_COL_ADDR)
         self.write_cmd(xpos0)
         self.write_cmd(xpos1)
