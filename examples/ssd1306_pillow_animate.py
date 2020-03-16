@@ -39,7 +39,7 @@ i2c = busio.I2C(SCL, SDA)
 disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
 
 # Note you can change the I2C address, or add a reset pin:
-#disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3c, reset=reset_pin)
+# disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c, addr=0x3c, reset=reset_pin)
 
 # Get display width and height.
 width = disp.width
@@ -51,7 +51,7 @@ disp.show()
 
 # Create image buffer.
 # Make sure to create image with mode '1' for 1-bit color.
-image = Image.new('1', (width, height))
+image = Image.new("1", (width, height))
 
 # Load default font.
 font = ImageFont.load_default()
@@ -65,18 +65,20 @@ font = ImageFont.load_default()
 draw = ImageDraw.Draw(image)
 
 # Define text and get total width.
-text = 'SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!!'+\
-       'GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH'
+text = (
+    "SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!!"
+    + "GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH"
+)
 maxwidth, unused = draw.textsize(text, font=font)
 
 # Set animation and sine wave parameters.
-amplitude = height/4
-offset = height/2 - 4
+amplitude = height / 4
+offset = height / 2 - 4
 velocity = -2
 startpos = width
 
 # Animate text moving in sine wave.
-print('Press Ctrl-C to quit.')
+print("Press Ctrl-C to quit.")
 pos = startpos
 while True:
     # Clear image buffer by drawing a black filled box.
@@ -93,7 +95,7 @@ while True:
             x += char_width
             continue
         # Calculate offset from sine wave.
-        y = offset+math.floor(amplitude*math.sin(x/float(width)*2.0*math.pi))
+        y = offset + math.floor(amplitude * math.sin(x / float(width) * 2.0 * math.pi))
         # Draw text.
         draw.text((x, y), c, font=font, fill=255)
         # Increment x position based on chacacter width.

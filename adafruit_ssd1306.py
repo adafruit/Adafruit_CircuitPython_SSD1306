@@ -32,6 +32,7 @@ import time
 
 from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
+
 try:
     import framebuf
 except ImportError:
@@ -40,31 +41,32 @@ except ImportError:
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
 
-#pylint: disable-msg=bad-whitespace
+# pylint: disable-msg=bad-whitespace
 # register definitions
-SET_CONTRAST        = const(0x81)
-SET_ENTIRE_ON       = const(0xa4)
-SET_NORM_INV        = const(0xa6)
-SET_DISP            = const(0xae)
-SET_MEM_ADDR        = const(0x20)
-SET_COL_ADDR        = const(0x21)
-SET_PAGE_ADDR       = const(0x22)
+SET_CONTRAST = const(0x81)
+SET_ENTIRE_ON = const(0xA4)
+SET_NORM_INV = const(0xA6)
+SET_DISP = const(0xAE)
+SET_MEM_ADDR = const(0x20)
+SET_COL_ADDR = const(0x21)
+SET_PAGE_ADDR = const(0x22)
 SET_DISP_START_LINE = const(0x40)
-SET_SEG_REMAP       = const(0xa0)
-SET_MUX_RATIO       = const(0xa8)
-SET_COM_OUT_DIR     = const(0xc0)
-SET_DISP_OFFSET     = const(0xd3)
-SET_COM_PIN_CFG     = const(0xda)
-SET_DISP_CLK_DIV    = const(0xd5)
-SET_PRECHARGE       = const(0xd9)
-SET_VCOM_DESEL      = const(0xdb)
-SET_CHARGE_PUMP     = const(0x8d)
-#pylint: enable-msg=bad-whitespace
+SET_SEG_REMAP = const(0xA0)
+SET_MUX_RATIO = const(0xA8)
+SET_COM_OUT_DIR = const(0xC0)
+SET_DISP_OFFSET = const(0xD3)
+SET_COM_PIN_CFG = const(0xDA)
+SET_DISP_CLK_DIV = const(0xD5)
+SET_PRECHARGE = const(0xD9)
+SET_VCOM_DESEL = const(0xDB)
+SET_CHARGE_PUMP = const(0x8D)
+# pylint: enable-msg=bad-whitespace
 
 
 class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
-    #pylint: disable-msg=too-many-arguments
+
+    # pylint: disable-msg=too-many-arguments
     def __init__(self, buffer, width, height, *, external_vcc, reset):
         super().__init__(buffer, width, height)
         self.width = width
@@ -90,27 +92,37 @@ class _SSD1306(framebuf.FrameBuffer):
     def init_display(self):
         """Base class to initialize display"""
         for cmd in (
-                SET_DISP | 0x00, # off
-                # address setting
-                SET_MEM_ADDR, 0x00, # horizontal
-                # resolution and layout
-                SET_DISP_START_LINE | 0x00,
-                SET_SEG_REMAP | 0x01, # column addr 127 mapped to SEG0
-                SET_MUX_RATIO, self.height - 1,
-                SET_COM_OUT_DIR | 0x08, # scan from COM[N] to COM0
-                SET_DISP_OFFSET, 0x00,
-                SET_COM_PIN_CFG, 0x02 if self.height == 32 or self.height == 16 else 0x12,
-                # timing and driving scheme
-                SET_DISP_CLK_DIV, 0x80,
-                SET_PRECHARGE, 0x22 if self.external_vcc else 0xf1,
-                SET_VCOM_DESEL, 0x30, # 0.83*Vcc
-                # display
-                SET_CONTRAST, 0xff, # maximum
-                SET_ENTIRE_ON, # output follows RAM contents
-                SET_NORM_INV, # not inverted
-                # charge pump
-                SET_CHARGE_PUMP, 0x10 if self.external_vcc else 0x14,
-                SET_DISP | 0x01): # on
+            SET_DISP | 0x00,  # off
+            # address setting
+            SET_MEM_ADDR,
+            0x00,  # horizontal
+            # resolution and layout
+            SET_DISP_START_LINE | 0x00,
+            SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
+            SET_MUX_RATIO,
+            self.height - 1,
+            SET_COM_OUT_DIR | 0x08,  # scan from COM[N] to COM0
+            SET_DISP_OFFSET,
+            0x00,
+            SET_COM_PIN_CFG,
+            0x02 if self.height == 32 or self.height == 16 else 0x12,
+            # timing and driving scheme
+            SET_DISP_CLK_DIV,
+            0x80,
+            SET_PRECHARGE,
+            0x22 if self.external_vcc else 0xF1,
+            SET_VCOM_DESEL,
+            0x30,  # 0.83*Vcc
+            # display
+            SET_CONTRAST,
+            0xFF,  # maximum
+            SET_ENTIRE_ON,  # output follows RAM contents
+            SET_NORM_INV,  # not inverted
+            # charge pump
+            SET_CHARGE_PUMP,
+            0x10 if self.external_vcc else 0x14,
+            SET_DISP | 0x01,
+        ):  # on
             self.write_cmd(cmd)
         if self.width == 72:
             self.write_cmd(0xAD)
@@ -172,6 +184,7 @@ class _SSD1306(framebuf.FrameBuffer):
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
 
+
 class SSD1306_I2C(_SSD1306):
     """
     I2C class for SSD1306
@@ -184,7 +197,9 @@ class SSD1306_I2C(_SSD1306):
     :param reset: if needed, DigitalInOut designating reset pin
     """
 
-    def __init__(self, width, height, i2c, *, addr=0x3c, external_vcc=False, reset=None):
+    def __init__(
+        self, width, height, i2c, *, addr=0x3C, external_vcc=False, reset=None
+    ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
         self.temp = bytearray(2)
@@ -195,12 +210,17 @@ class SSD1306_I2C(_SSD1306):
         # buffer).
         self.buffer = bytearray(((height // 8) * width) + 1)
         self.buffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
-        super().__init__(memoryview(self.buffer)[1:], width, height,
-                         external_vcc=external_vcc, reset=reset)
+        super().__init__(
+            memoryview(self.buffer)[1:],
+            width,
+            height,
+            external_vcc=external_vcc,
+            reset=reset,
+        )
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""
-        self.temp[0] = 0x80 # Co=1, D/C#=0
+        self.temp[0] = 0x80  # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
             self.i2c_device.write(self.temp)
@@ -211,7 +231,8 @@ class SSD1306_I2C(_SSD1306):
         with self.i2c_device:
             self.i2c_device.write(self.buffer)
 
-#pylint: disable-msg=too-many-arguments
+
+# pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
     """
     SPI class for SSD1306
@@ -223,18 +244,37 @@ class SSD1306_SPI(_SSD1306):
     :param reset: the reset pin to use,
     :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
+
     # pylint: disable=no-member
     # Disable should be reconsidered when refactor can be tested.
-    def __init__(self, width, height, spi, dc, reset, cs, *,
-                 external_vcc=False, baudrate=8000000, polarity=0, phase=0):
+    def __init__(
+        self,
+        width,
+        height,
+        spi,
+        dc,
+        reset,
+        cs,
+        *,
+        external_vcc=False,
+        baudrate=8000000,
+        polarity=0,
+        phase=0
+    ):
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
-        self.spi_device = spi_device.SPIDevice(spi, cs, baudrate=baudrate,
-                                               polarity=polarity, phase=phase)
+        self.spi_device = spi_device.SPIDevice(
+            spi, cs, baudrate=baudrate, polarity=polarity, phase=phase
+        )
         self.dc_pin = dc
         self.buffer = bytearray((height // 8) * width)
-        super().__init__(memoryview(self.buffer), width, height,
-                         external_vcc=external_vcc, reset=reset)
+        super().__init__(
+            memoryview(self.buffer),
+            width,
+            height,
+            external_vcc=external_vcc,
+            reset=reset,
+        )
 
     def write_cmd(self, cmd):
         """Send a command to the SPI device"""

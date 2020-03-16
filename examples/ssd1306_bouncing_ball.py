@@ -38,6 +38,7 @@ def draw_circle(xpos0, ypos0, rad, col=1):
             dx += 2
             err += dx - (rad << 1)
 
+
 # initial center of the circle
 center_x = 63
 center_y = 15
