@@ -89,6 +89,13 @@ Usage Example
 
   display.show()
 
+  # Set a pixel in the origin 0,0 position.
+  display.pixel(0, 0, 1)
+  # Set a pixel in the middle 64, 16 position.
+  display.pixel(64, 16, 1)
+  # Set a pixel in the opposite 127, 31 position.
+  display.pixel(127, 31, 1)
+  display.show()
 
 More examples and details can be found in the `adafruit_framebuf docs <https://circuitpython.readthedocs.io/projects/framebuf/en/latest>`__.
 
