@@ -89,6 +89,16 @@ class _SSD1306(framebuf.FrameBuffer):
 
     def init_display(self):
         """Base class to initialize display"""
+        # The various screen sizes available with the ssd1306 OLED driver
+        # chip require differing configuration values for the display clock
+        # div and com pin, which are listed below for reference and future
+        # compatibility:
+        #    w,  h: DISP_CLK_DIV  COM_PIN_CFG
+        #  128, 64:         0x80         0x12
+        #  128, 32:         0x80         0x02
+        #   96, 16:         0x60         0x02
+        #   64, 48:         0x80         0x12
+        #   64, 32:         0x80         0x12
         for cmd in (
             SET_DISP | 0x00,  # off
             # address setting
@@ -103,7 +113,7 @@ class _SSD1306(framebuf.FrameBuffer):
             SET_DISP_OFFSET,
             0x00,
             SET_COM_PIN_CFG,
-            0x02 if self.height == 32 or self.height == 16 else 0x12,
+            0x02 if (self.height == 32 or self.height == 16) and (self.width != 64) else 0x12,
             # timing and driving scheme
             SET_DISP_CLK_DIV,
             0x80,
