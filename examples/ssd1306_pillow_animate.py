@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Copyright (c) 2014 Adafruit Industries
 # Author: Tony DiCola
 #

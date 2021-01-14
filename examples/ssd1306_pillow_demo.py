@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This demo will fill the screen with white, draw a black box on top
 and then print Hello World! in the center of the display

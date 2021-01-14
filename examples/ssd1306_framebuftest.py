@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Basic example of using framebuf capabilities on a SSD1306 OLED display.
 # This example and library is meant to work with Adafruit CircuitPython API.
 # Author: Tony DiCola
