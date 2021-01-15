@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-FileCopyrightText: Melissa LeBlanc-Williams for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
 # This example is for use on (Linux) computers that are using CPython with
