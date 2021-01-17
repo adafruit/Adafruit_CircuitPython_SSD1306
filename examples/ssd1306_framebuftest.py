@@ -1,7 +1,8 @@
+# SPDX-FileCopyrightText: Tony DiCola
+# SPDX-License-Identifier: CC0-1.0
+
 # Basic example of using framebuf capabilities on a SSD1306 OLED display.
 # This example and library is meant to work with Adafruit CircuitPython API.
-# Author: Tony DiCola
-# License: Public Domain
 
 # Import all board pins.
 import time
