@@ -292,7 +292,9 @@ class SSD1306_SPI(_SSD1306):
         page_addressing=False
     ):
         if page_addressing:
-            raise NotImplementedError("Page addressing mode with SPI has not yet been implemented.")
+            raise NotImplementedError(
+                "Page addressing mode with SPI has not yet been implemented."
+            )
 
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
