@@ -99,9 +99,9 @@ class _SSD1306(framebuf.FrameBuffer):
             SET_DISP | 0x00,  # off
             # address setting
             SET_MEM_ADDR,
-            0x10 # Page Addressing Mode
+            0x10  # Page Addressing Mode
             if self.page_addressing
-            else 0x00, # Horizontal Addressing Mode
+            else 0x00,  # Horizontal Addressing Mode
             # resolution and layout
             SET_DISP_START_LINE | 0x00,
             SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
@@ -207,11 +207,19 @@ class SSD1306_I2C(_SSD1306):
     """
 
     def __init__(
-        self, width, height, i2c, *, addr=0x3C, external_vcc=False, reset=None, page_addressing=False
+        self,
+        width,
+        height,
+        i2c,
+        *,
+        addr=0x3C,
+        external_vcc=False,
+        reset=None,
+        page_addressing=False
     ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
-        self.page_addressing = page_addressing 
+        self.page_addressing = page_addressing
         self.temp = bytearray(2)
         # Add an extra byte to the data buffer to hold an I2C data/command byte
         # to use hardware-compatible I2C transactions.  A memoryview of the
@@ -244,11 +252,14 @@ class SSD1306_I2C(_SSD1306):
                 self.write_cmd(0xB0 + page)
                 self.write_cmd(self.page_column_start[0])
                 self.write_cmd(self.page_column_start[1])
-                self.pagebuffer[1:] = self.buffer[1 + self.width * page:1 + self.width * (page + 1)]
+                self.pagebuffer[1:] = self.buffer[
+                    1 + self.width * page : 1 + self.width * (page + 1)
+                ]
                 self.i2c_device.write(self.pagebuffer)
         else:
             with self.i2c_device:
                 self.i2c_device.write(self.buffer)
+
 
 # pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
