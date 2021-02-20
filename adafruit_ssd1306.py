@@ -234,7 +234,7 @@ class SSD1306_I2C(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
-            page_addressing=self.page_addressing
+            page_addressing=self.page_addressing,
         )
 
     def write_cmd(self, cmd):
@@ -304,7 +304,7 @@ class SSD1306_SPI(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
-            page_addressing=self.page_addressing
+            page_addressing=self.page_addressing,
         )
 
     def write_cmd(self, cmd):
