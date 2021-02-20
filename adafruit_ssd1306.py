@@ -234,7 +234,7 @@ class SSD1306_I2C(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
-            page_addressing=self.page_addressing,
+            page_addressing=self.page_addressing
         )
 
     def write_cmd(self, cmd):
@@ -288,7 +288,8 @@ class SSD1306_SPI(_SSD1306):
         external_vcc=False,
         baudrate=8000000,
         polarity=0,
-        phase=0
+        phase=0,
+        page_addressing=False
     ):
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
@@ -303,6 +304,7 @@ class SSD1306_SPI(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
+            page_addressing=self.page_addressing
         )
 
     def write_cmd(self, cmd):
