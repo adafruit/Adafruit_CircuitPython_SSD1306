@@ -48,13 +48,14 @@ class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
 
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, buffer, width, height, *, external_vcc, reset):
+    def __init__(self, buffer, width, height, *, external_vcc, reset, page_addressing):
         super().__init__(buffer, width, height)
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
         # reset may be None if not needed
         self.reset_pin = reset
+        self.page_addressing = page_addressing
         if self.reset_pin:
             self.reset_pin.switch_to_output(value=0)
         self.pages = self.height // 8
@@ -62,6 +63,18 @@ class _SSD1306(framebuf.FrameBuffer):
         # This is necessary because the underlying data buffer is different
         # between I2C and SPI implementations (I2C needs an extra byte).
         self._power = False
+        # Parameters for efficient Page Addressing Mode (typical of U8Glib libraries)
+        # Important as not all screens appear to support Horizontal Addressing Mode
+        if self.page_addressing:
+            self.pagebuffer = bytearray(width + 1)
+            self.pagebuffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
+            self.page_column_start = bytearray(2)
+            self.page_column_start[0] = self.width % 32
+            self.page_column_start[1] = 0x10 + self.width // 32
+        else:
+            self.pagebuffer = None
+            self.page_column_start = None
+        # Let's get moving!
         self.poweron()
         self.init_display()
 
@@ -86,7 +99,9 @@ class _SSD1306(framebuf.FrameBuffer):
             SET_DISP | 0x00,  # off
             # address setting
             SET_MEM_ADDR,
-            0x00,  # horizontal
+            0x10  # Page Addressing Mode
+            if self.page_addressing
+            else 0x00,  # Horizontal Addressing Mode
             # resolution and layout
             SET_DISP_START_LINE | 0x00,
             SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
@@ -105,7 +120,7 @@ class _SSD1306(framebuf.FrameBuffer):
             SET_PRECHARGE,
             0x22 if self.external_vcc else 0xF1,
             SET_VCOM_DESEL,
-            0x30,  # 0.83*Vcc
+            0x30,  # 0.83*Vcc  # n.b. specs for ssd1306 64x32 oled screens imply this should be 0x40
             # display
             SET_CONTRAST,
             0xFF,  # maximum
@@ -159,22 +174,23 @@ class _SSD1306(framebuf.FrameBuffer):
 
     def show(self):
         """Update the display"""
-        xpos0 = 0
-        xpos1 = self.width - 1
-        if self.width == 64:
-            # displays with width of 64 pixels are shifted by 32
-            xpos0 += 32
-            xpos1 += 32
-        if self.width == 72:
-            # displays with width of 72 pixels are shifted by 28
-            xpos0 += 28
-            xpos1 += 28
-        self.write_cmd(SET_COL_ADDR)
-        self.write_cmd(xpos0)
-        self.write_cmd(xpos1)
-        self.write_cmd(SET_PAGE_ADDR)
-        self.write_cmd(0)
-        self.write_cmd(self.pages - 1)
+        if not self.page_addressing:
+            xpos0 = 0
+            xpos1 = self.width - 1
+            if self.width == 64:
+                # displays with width of 64 pixels are shifted by 32
+                xpos0 += 32
+                xpos1 += 32
+            if self.width == 72:
+                # displays with width of 72 pixels are shifted by 28
+                xpos0 += 28
+                xpos1 += 28
+            self.write_cmd(SET_COL_ADDR)
+            self.write_cmd(xpos0)
+            self.write_cmd(xpos1)
+            self.write_cmd(SET_PAGE_ADDR)
+            self.write_cmd(0)
+            self.write_cmd(self.pages - 1)
         self.write_framebuf()
 
 
@@ -191,10 +207,19 @@ class SSD1306_I2C(_SSD1306):
     """
 
     def __init__(
-        self, width, height, i2c, *, addr=0x3C, external_vcc=False, reset=None
+        self,
+        width,
+        height,
+        i2c,
+        *,
+        addr=0x3C,
+        external_vcc=False,
+        reset=None,
+        page_addressing=False
     ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
+        self.page_addressing = page_addressing
         self.temp = bytearray(2)
         # Add an extra byte to the data buffer to hold an I2C data/command byte
         # to use hardware-compatible I2C transactions.  A memoryview of the
@@ -209,10 +234,11 @@ class SSD1306_I2C(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
+            page_addressing=self.page_addressing,
         )
 
     def write_cmd(self, cmd):
-        """Send a command to the SPI device"""
+        """Send a command to the I2C device"""
         self.temp[0] = 0x80  # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
@@ -221,8 +247,18 @@ class SSD1306_I2C(_SSD1306):
     def write_framebuf(self):
         """Blast out the frame buffer using a single I2C transaction to support
         hardware I2C interfaces."""
-        with self.i2c_device:
-            self.i2c_device.write(self.buffer)
+        if self.page_addressing:
+            for page in range(self.pages):
+                self.write_cmd(0xB0 + page)
+                self.write_cmd(self.page_column_start[0])
+                self.write_cmd(self.page_column_start[1])
+                self.pagebuffer[1:] = self.buffer[
+                    1 + self.width * page : 1 + self.width * (page + 1)
+                ]
+                self.i2c_device.write(self.pagebuffer)
+        else:
+            with self.i2c_device:
+                self.i2c_device.write(self.buffer)
 
 
 # pylint: disable-msg=too-many-arguments
@@ -252,8 +288,14 @@ class SSD1306_SPI(_SSD1306):
         external_vcc=False,
         baudrate=8000000,
         polarity=0,
-        phase=0
+        phase=0,
+        page_addressing=False
     ):
+        if page_addressing:
+            raise NotImplementedError(
+                "Page addressing mode with SPI has not yet been implemented."
+            )
+
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)
         self.spi_device = spi_device.SPIDevice(
@@ -267,6 +309,7 @@ class SSD1306_SPI(_SSD1306):
             height,
             external_vcc=external_vcc,
             reset=reset,
+            page_addressing=self.page_addressing,
         )
 
     def write_cmd(self, cmd):
