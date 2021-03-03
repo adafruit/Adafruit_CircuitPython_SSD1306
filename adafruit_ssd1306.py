@@ -291,7 +291,8 @@ class SSD1306_SPI(_SSD1306):
         phase=0,
         page_addressing=False
     ):
-        if page_addressing:
+        self.page_addressing = page_addressing
+        if self.page_addressing:
             raise NotImplementedError(
                 "Page addressing mode with SPI has not yet been implemented."
             )
