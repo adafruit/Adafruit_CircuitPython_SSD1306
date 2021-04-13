@@ -65,7 +65,7 @@ while True:
     # https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
     cmd = "hostname -I | cut -d' ' -f1"
     IP = subprocess.check_output(cmd, shell=True).decode("utf-8")
-    cmd = "cut -f 1 -d \" \" /proc/loadavg"
+    cmd = 'cut -f 1 -d " " /proc/loadavg'
     CPU = subprocess.check_output(cmd, shell=True).decode("utf-8")
     cmd = "free -m | awk 'NR==2{printf \"Mem: %s/%s MB  %.2f%%\", $3,$2,$3*100/$2 }'"
     MemUsage = subprocess.check_output(cmd, shell=True).decode("utf-8")
