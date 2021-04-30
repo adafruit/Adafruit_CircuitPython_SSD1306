@@ -255,7 +255,8 @@ class SSD1306_I2C(_SSD1306):
                 self.pagebuffer[1:] = self.buffer[
                     1 + self.width * page : 1 + self.width * (page + 1)
                 ]
-                self.i2c_device.write(self.pagebuffer)
+                with self.i2c_device:
+                    self.i2c_device.write(self.pagebuffer)
         else:
             with self.i2c_device:
                 self.i2c_device.write(self.buffer)
