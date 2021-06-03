@@ -89,6 +89,6 @@ try:
 except FileNotFoundError:
     print(
         "To test the framebuf font setup, you'll need the font5x8.bin file from "
-        + "https://github.com/adafruit/Adafruit_CircuitPython_framebuf/tree/main/examples"
+        + "https://github.com/adafruit/Adafruit_CircuitPython_framebuf/blob/master/examples/"
         + " in the same directory as this script"
     )
