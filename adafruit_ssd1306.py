@@ -97,14 +97,14 @@ class _SSD1306(framebuf.FrameBuffer):
         #   64, 48:         0x80         0x12
         #   64, 32:         0x80         0x12
         for cmd in (
-            SET_DISP | 0x00,  # off
+            SET_DISP,  # off
             # address setting
             SET_MEM_ADDR,
             0x10  # Page Addressing Mode
             if self.page_addressing
             else 0x00,  # Horizontal Addressing Mode
             # resolution and layout
-            SET_DISP_START_LINE | 0x00,
+            SET_DISP_START_LINE,
             SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
             SET_MUX_RATIO,
             self.height - 1,
@@ -132,15 +132,15 @@ class _SSD1306(framebuf.FrameBuffer):
             # charge pump
             SET_CHARGE_PUMP,
             0x10 if self.external_vcc else 0x14,
-            SET_DISP | 0x01,
-        ):  # on
+            SET_DISP | 0x01,  # display on
+        ):
             self.write_cmd(cmd)
         self.fill(0)
         self.show()
 
     def poweroff(self):
         """Turn off the display (nothing visible)"""
-        self.write_cmd(SET_DISP | 0x00)
+        self.write_cmd(SET_DISP)
         self._power = False
 
     def contrast(self, contrast):
@@ -151,6 +151,12 @@ class _SSD1306(framebuf.FrameBuffer):
     def invert(self, invert):
         """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
+
+    def rotate(self, rotate):
+        """Rotate the display 0 or 180 degrees"""
+        self.write_cmd(SET_COM_OUT_DIR | ((rotate & 1) << 3))
+        self.write_cmd(SET_SEG_REMAP | (rotate & 1))
+        # com output is immediate (vertical mirror) but you need to call show() for seg remap to be visible
 
     def write_framebuf(self):
         """Derived class must implement this"""
