@@ -154,7 +154,8 @@ class _SSD1306(framebuf.FrameBuffer):
         """Rotate the display 0 or 180 degrees"""
         self.write_cmd(SET_COM_OUT_DIR | ((rotate & 1) << 3))
         self.write_cmd(SET_SEG_REMAP | (rotate & 1))
-        # com output is immediate (vertical mirror) but you need to call show() for seg remap to be visible
+        # com output (vertical mirror) is changed immediately
+        # you need to call show() for the seg remap to be visible
 
     def write_framebuf(self):
         """Derived class must implement this"""
