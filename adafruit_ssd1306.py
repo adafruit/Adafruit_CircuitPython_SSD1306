@@ -35,6 +35,7 @@ SET_PAGE_ADDR = const(0x22)
 SET_DISP_START_LINE = const(0x40)
 SET_SEG_REMAP = const(0xA0)
 SET_MUX_RATIO = const(0xA8)
+SET_IREF_SELECT = const(0xAD)
 SET_COM_OUT_DIR = const(0xC0)
 SET_DISP_OFFSET = const(0xD3)
 SET_COM_PIN_CFG = const(0xDA)
@@ -96,14 +97,14 @@ class _SSD1306(framebuf.FrameBuffer):
         #   64, 48:         0x80         0x12
         #   64, 32:         0x80         0x12
         for cmd in (
-            SET_DISP | 0x00,  # off
+            SET_DISP,  # off
             # address setting
             SET_MEM_ADDR,
             0x10  # Page Addressing Mode
             if self.page_addressing
             else 0x00,  # Horizontal Addressing Mode
             # resolution and layout
-            SET_DISP_START_LINE | 0x00,
+            SET_DISP_START_LINE,
             SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
             SET_MUX_RATIO,
             self.height - 1,
@@ -111,9 +112,7 @@ class _SSD1306(framebuf.FrameBuffer):
             SET_DISP_OFFSET,
             0x00,
             SET_COM_PIN_CFG,
-            0x02
-            if (self.height == 32 or self.height == 16) and (self.width != 64)
-            else 0x12,
+            0x02 if self.width > 2 * self.height else 0x12,
             # timing and driving scheme
             SET_DISP_CLK_DIV,
             0x80,
@@ -126,21 +125,20 @@ class _SSD1306(framebuf.FrameBuffer):
             0xFF,  # maximum
             SET_ENTIRE_ON,  # output follows RAM contents
             SET_NORM_INV,  # not inverted
+            SET_IREF_SELECT,
+            0x30,  # enable internal IREF during display on
             # charge pump
             SET_CHARGE_PUMP,
             0x10 if self.external_vcc else 0x14,
-            SET_DISP | 0x01,
-        ):  # on
+            SET_DISP | 0x01,  # display on
+        ):
             self.write_cmd(cmd)
-        if self.width == 72:
-            self.write_cmd(0xAD)
-            self.write_cmd(0x30)
         self.fill(0)
         self.show()
 
     def poweroff(self):
         """Turn off the display (nothing visible)"""
-        self.write_cmd(SET_DISP | 0x00)
+        self.write_cmd(SET_DISP)
         self._power = False
 
     def contrast(self, contrast):
@@ -151,6 +149,13 @@ class _SSD1306(framebuf.FrameBuffer):
     def invert(self, invert):
         """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
+
+    def rotate(self, rotate):
+        """Rotate the display 0 or 180 degrees"""
+        self.write_cmd(SET_COM_OUT_DIR | ((rotate & 1) << 3))
+        self.write_cmd(SET_SEG_REMAP | (rotate & 1))
+        # com output (vertical mirror) is changed immediately
+        # you need to call show() for the seg remap to be visible
 
     def write_framebuf(self):
         """Derived class must implement this"""
@@ -177,14 +182,11 @@ class _SSD1306(framebuf.FrameBuffer):
         if not self.page_addressing:
             xpos0 = 0
             xpos1 = self.width - 1
-            if self.width == 64:
-                # displays with width of 64 pixels are shifted by 32
-                xpos0 += 32
-                xpos1 += 32
-            if self.width == 72:
-                # displays with width of 72 pixels are shifted by 28
-                xpos0 += 28
-                xpos1 += 28
+            if self.width != 128:
+                # narrow displays use centered columns
+                col_offset = (128 - self.width) // 2
+                xpos0 += col_offset
+                xpos1 += col_offset
             self.write_cmd(SET_COL_ADDR)
             self.write_cmd(xpos0)
             self.write_cmd(xpos1)
