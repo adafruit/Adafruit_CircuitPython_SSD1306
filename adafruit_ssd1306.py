@@ -21,6 +21,11 @@ try:
 except ImportError:
     import adafruit_framebuf as framebuf
 
+try:
+    from typing import Any, Optional
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
 
@@ -49,7 +54,16 @@ class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
 
     # pylint: disable-msg=too-many-arguments
-    def __init__(self, buffer, width, height, *, external_vcc, reset, page_addressing):
+    def __init__(
+        self,
+        buffer: memoryview,
+        width: int,
+        height: int,
+        *,
+        external_vcc: bool,
+        reset: Any,
+        page_addressing: bool
+    ):
         super().__init__(buffer, width, height)
         self.width = width
         self.height = height
@@ -67,9 +81,9 @@ class _SSD1306(framebuf.FrameBuffer):
         # Parameters for efficient Page Addressing Mode (typical of U8Glib libraries)
         # Important as not all screens appear to support Horizontal Addressing Mode
         if self.page_addressing:
-            self.pagebuffer = bytearray(width + 1)
+            self.pagebuffer = bytearray(width + 1)  # type: Optional[bytearray]
             self.pagebuffer[0] = 0x40  # Set first byte of data buffer to Co=0, D/C=1
-            self.page_column_start = bytearray(2)
+            self.page_column_start = bytearray(2)  # type: Optional[bytearray]
             self.page_column_start[0] = self.width % 32
             self.page_column_start[1] = 0x10 + self.width // 32
         else:
@@ -80,11 +94,11 @@ class _SSD1306(framebuf.FrameBuffer):
         self.init_display()
 
     @property
-    def power(self):
+    def power(self) -> bool:
         """True if the display is currently powered on, otherwise False"""
         return self._power
 
-    def init_display(self):
+    def init_display(self) -> None:
         """Base class to initialize display"""
         # The various screen sizes available with the ssd1306 OLED driver
         # chip require differing configuration values for the display clock
@@ -136,36 +150,36 @@ class _SSD1306(framebuf.FrameBuffer):
         self.fill(0)
         self.show()
 
-    def poweroff(self):
+    def poweroff(self) -> None:
         """Turn off the display (nothing visible)"""
         self.write_cmd(SET_DISP)
         self._power = False
 
-    def contrast(self, contrast):
+    def contrast(self, contrast: int) -> None:
         """Adjust the contrast"""
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
 
-    def invert(self, invert):
+    def invert(self, invert: bool) -> None:
         """Invert all pixels on the display"""
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
-    def rotate(self, rotate):
+    def rotate(self, rotate: bool) -> None:
         """Rotate the display 0 or 180 degrees"""
         self.write_cmd(SET_COM_OUT_DIR | ((rotate & 1) << 3))
         self.write_cmd(SET_SEG_REMAP | (rotate & 1))
         # com output (vertical mirror) is changed immediately
         # you need to call show() for the seg remap to be visible
 
-    def write_framebuf(self):
+    def write_framebuf(self) -> None:
         """Derived class must implement this"""
         raise NotImplementedError
 
-    def write_cmd(self, cmd):
+    def write_cmd(self, cmd: Any) -> None:
         """Derived class must implement this"""
         raise NotImplementedError
 
-    def poweron(self):
+    def poweron(self) -> None:
         "Reset device and turn on the display."
         if self.reset_pin:
             self.reset_pin.value = 1
@@ -177,7 +191,7 @@ class _SSD1306(framebuf.FrameBuffer):
         self.write_cmd(SET_DISP | 0x01)
         self._power = True
 
-    def show(self):
+    def show(self) -> None:
         """Update the display"""
         if not self.page_addressing:
             xpos0 = 0
@@ -210,14 +224,14 @@ class SSD1306_I2C(_SSD1306):
 
     def __init__(
         self,
-        width,
-        height,
-        i2c,
+        width: int,
+        height: int,
+        i2c: Any,
         *,
-        addr=0x3C,
-        external_vcc=False,
-        reset=None,
-        page_addressing=False
+        addr: int = 0x3C,
+        external_vcc: bool = False,
+        reset: Any = None,
+        page_addressing: bool = False
     ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
@@ -239,14 +253,14 @@ class SSD1306_I2C(_SSD1306):
             page_addressing=self.page_addressing,
         )
 
-    def write_cmd(self, cmd):
+    def write_cmd(self, cmd: int) -> None:
         """Send a command to the I2C device"""
         self.temp[0] = 0x80  # Co=1, D/C#=0
         self.temp[1] = cmd
         with self.i2c_device:
             self.i2c_device.write(self.temp)
 
-    def write_framebuf(self):
+    def write_framebuf(self) -> None:
         """Blast out the frame buffer using a single I2C transaction to support
         hardware I2C interfaces."""
         if self.page_addressing:
@@ -281,18 +295,18 @@ class SSD1306_SPI(_SSD1306):
     # Disable should be reconsidered when refactor can be tested.
     def __init__(
         self,
-        width,
-        height,
-        spi,
-        dc,
-        reset,
-        cs,
+        width: int,
+        height: int,
+        spi: Any,
+        dc: Any,
+        reset: bool,
+        cs: int,
         *,
-        external_vcc=False,
-        baudrate=8000000,
-        polarity=0,
-        phase=0,
-        page_addressing=False
+        external_vcc: bool = False,
+        baudrate: int = 8000000,
+        polarity: int = 0,
+        phase: int = 0,
+        page_addressing: bool = False
     ):
         self.page_addressing = page_addressing
         if self.page_addressing:
@@ -316,13 +330,13 @@ class SSD1306_SPI(_SSD1306):
             page_addressing=self.page_addressing,
         )
 
-    def write_cmd(self, cmd):
+    def write_cmd(self, cmd: int) -> None:
         """Send a command to the SPI device"""
         self.dc_pin.value = 0
         with self.spi_device as spi:
             spi.write(bytearray([cmd]))
 
-    def write_framebuf(self):
+    def write_framebuf(self) -> None:
         """write to the frame buffer via SPI"""
         self.dc_pin.value = 1
         with self.spi_device as spi:
