@@ -22,7 +22,10 @@ except ImportError:
     import adafruit_framebuf as framebuf
 
 try:
-    from typing import Any, Optional
+    # Used only for typing
+    from typing import Optional
+    import busio
+    import digitalio
 except ImportError:
     pass
 
@@ -61,7 +64,7 @@ class _SSD1306(framebuf.FrameBuffer):
         height: int,
         *,
         external_vcc: bool,
-        reset: Any,
+        reset: Optional[digitalio.DigitalInOut],
         page_addressing: bool
     ):
         super().__init__(buffer, width, height)
@@ -175,7 +178,7 @@ class _SSD1306(framebuf.FrameBuffer):
         """Derived class must implement this"""
         raise NotImplementedError
 
-    def write_cmd(self, cmd: Any) -> None:
+    def write_cmd(self, cmd: int) -> None:
         """Derived class must implement this"""
         raise NotImplementedError
 
@@ -226,11 +229,11 @@ class SSD1306_I2C(_SSD1306):
         self,
         width: int,
         height: int,
-        i2c: Any,
+        i2c: busio.I2C,
         *,
         addr: int = 0x3C,
         external_vcc: bool = False,
-        reset: Any = None,
+        reset: Optional[digitalio.DigitalInOut] = None,
         page_addressing: bool = False
     ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
@@ -297,10 +300,10 @@ class SSD1306_SPI(_SSD1306):
         self,
         width: int,
         height: int,
-        spi: Any,
-        dc: Any,
-        reset: bool,
-        cs: int,
+        spi: busio.SPI,
+        dc: digitalio.DigitalInOut,
+        reset: Optional[digitalio.DigitalInOut],
+        cs: digitalio.DigitalInOut,
         *,
         external_vcc: bool = False,
         baudrate: int = 8000000,
