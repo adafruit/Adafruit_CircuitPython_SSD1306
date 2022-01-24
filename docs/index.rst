@@ -34,7 +34,7 @@ Table of Contents
     :caption: Other Links
 
     Download <https://github.com/adafruit/adafruit_CircuitPython_SSD1306/releases/latest>
-    CircuitPython Reference Documentation <https://circuitpython.readthedocs.io>
+    CircuitPython Reference Documentation <https://docs.circuitpython.org>
     CircuitPython Support Forum <https://forums.adafruit.com/viewforum.php?f=60>
     Discord Chat <https://adafru.it/discord>
     Adafruit Learning System <https://learn.adafruit.com>
