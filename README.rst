@@ -5,7 +5,7 @@ Introduction
     :target: https://docs.circuitpython.org/projects/ssd1306/en/latest/
     :alt: Documentation Status
 
-.. image:: https://github.com/adafruit/Adafruit_CircuitPython_Bundle/blob/main/badges/adafruit_discord.svg
+.. image:: https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_Bundle/main/badges/adafruit_discord.svg
     :target: https://adafru.it/discord
     :alt: Discord
 
