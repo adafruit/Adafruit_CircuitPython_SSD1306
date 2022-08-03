@@ -35,7 +35,7 @@ TEXT = ""
 
 # Very important... This lets py-gaugette 'know' what pins to use in order to reset the display
 i2c = board.I2C()
-oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3D, reset=RESET_PIN)
+oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x3C, reset=RESET_PIN)
 
 # This sets TEXT equal to whatever your IP address is, or isn't
 try:
