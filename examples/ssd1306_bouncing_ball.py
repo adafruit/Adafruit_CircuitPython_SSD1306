@@ -11,7 +11,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 # Create the SSD1306 OLED class.
 # The first two parameters are the pixel width and pixel height.  Change these
 # to the right size for your display!
-oled = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
+oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
 
 
 # Helper function to draw a circle from a given position with a given radius
