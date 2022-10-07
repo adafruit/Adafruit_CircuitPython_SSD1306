@@ -17,9 +17,15 @@ from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
 
 try:
+    # MicroPython framebuf import
     import framebuf
+
+    _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
 except ImportError:
+    # CircuitPython framebuf import
     import adafruit_framebuf as framebuf
+
+    _FRAMEBUF_FORMAT = framebuf.MVLSB
 
 try:
     # Used only for typing
@@ -67,7 +73,7 @@ class _SSD1306(framebuf.FrameBuffer):
         reset: Optional[digitalio.DigitalInOut],
         page_addressing: bool
     ):
-        super().__init__(buffer, width, height)
+        super().__init__(buffer, width, height, _FRAMEBUF_FORMAT)
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
