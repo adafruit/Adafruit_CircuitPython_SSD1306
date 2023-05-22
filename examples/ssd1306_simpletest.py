@@ -4,7 +4,6 @@
 # Basic example of clearing and drawing pixels on a SSD1306 OLED display.
 # This example and library is meant to work with Adafruit CircuitPython API.
 
-import time
 import board
 import busio
 import displayio
