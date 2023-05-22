@@ -5,7 +5,6 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 
 import board
-import busio
 import displayio
 import adafruit_ssd1306
 
