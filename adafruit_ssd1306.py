@@ -17,25 +17,16 @@ from sys import implementation
 from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
 
-if (
-    implementation.name.upper() == "CIRCUITPYTHON"
-    or implementation.name.upper() == "CPYTHON"
-):
-    try:
-        # CircuitPython framebuf import
-        import adafruit_framebuf as framebuf
-
-        _FRAMEBUF_FORMAT = framebuf.MVLSB
-    except ImportError as exc:
-        if implementation.name.upper() == "CIRCUITPYTHON":
-            raise ImportError("no module named adafruit_framebuf") from exc
-
-# If framebuf wasn't imported then we must be running under CPYTHON or MICROPYTHON
-if not "framebuf" in dir():
+if implementation.name.upper() == "MICROPYTHON":
     # MicroPython framebuf import
     import framebuf
 
     _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
+else:
+    # CircuitPython framebuf import
+    import adafruit_framebuf as framebuf
+
+    _FRAMEBUF_FORMAT = framebuf.MVLSB
 
 try:
     # Used only for typing
