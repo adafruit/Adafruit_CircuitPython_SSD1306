@@ -22,7 +22,7 @@ if implementation.name.upper() == "MICROPYTHON":
     import framebuf
 
     _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
-elif implementation.name.upper() == "CIRCUITPYTHON":
+else:
     # CircuitPython framebuf import
     import adafruit_framebuf as framebuf
 
