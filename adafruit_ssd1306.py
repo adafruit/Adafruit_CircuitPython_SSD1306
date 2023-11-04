@@ -13,15 +13,16 @@ MicroPython SSD1306 OLED driver, I2C and SPI interfaces
 
 import time
 
+from sys import implementation
 from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
 
-try:
+if implementation.name.upper() == "MICROPYTHON":
     # MicroPython framebuf import
     import framebuf
 
     _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
-except ImportError:
+elif implementation.name.upper() == "CIRCUITPYTHON":
     # CircuitPython framebuf import
     import adafruit_framebuf as framebuf
 
