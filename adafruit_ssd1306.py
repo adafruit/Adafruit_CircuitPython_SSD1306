@@ -17,11 +17,17 @@ from sys import implementation
 from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
 
-if implementation.name.upper() == "MICROPYTHON":
-    # MicroPython framebuf import
-    import framebuf
+if implementation.name.upper() == "CPYTHON":
+    try:
+        # MicroPython framebuf import
+        import framebuf
 
-    _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
+        _FRAMEBUF_FORMAT = framebuf.MONO_VLSB
+    except:
+        # CircuitPython framebuf import
+        import adafruit_framebuf as framebuf
+
+        _FRAMEBUF_FORMAT = framebuf.MVLSB
 else:
     # CircuitPython framebuf import
     import adafruit_framebuf as framebuf
