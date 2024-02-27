@@ -74,7 +74,7 @@ while True:
             break
         # Calculate width but skip drawing if off the left side of screen.
         if x < -10:
-            bbox = draw.textbbox((0,0), c, font=font)
+            bbox = draw.textbbox((0, 0), c, font=font)
             char_width, char_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
             x += char_width
             continue
@@ -83,7 +83,7 @@ while True:
         # Draw text.
         draw.text((x, y), c, font=font, fill=255)
         # Increment x position based on chacacter width.
-        bbox = draw.textbbox((0,0), c, font=font)
+        bbox = draw.textbbox((0, 0), c, font=font)
         char_width, char_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
         x += char_width
 
