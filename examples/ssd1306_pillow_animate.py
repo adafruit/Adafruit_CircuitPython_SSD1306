@@ -51,7 +51,7 @@ text = (
     "SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!!"
     + "GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH"
 )
-bbox = draw.textbbox((0,0), text, font=font)
+bbox = draw.textbbox((0, 0), text, font=font)
 maxwidth = bbox[2] - bbox[0]
 
 # Set animation and sine wave parameters.
