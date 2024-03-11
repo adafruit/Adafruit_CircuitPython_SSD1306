@@ -5,10 +5,7 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 
 import board
-import displayio
 import adafruit_ssd1306
-
-displayio.release_displays()
 
 # Create the I2C bus interface.
 i2c = board.I2C()  # uses board.SCL and board.SDA

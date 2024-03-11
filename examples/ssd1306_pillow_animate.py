@@ -51,7 +51,8 @@ text = (
     "SSD1306 ORGANIC LED DISPLAY. THIS IS AN OLD SCHOOL DEMO SCROLLER!!"
     + "GREETZ TO: LADYADA & THE ADAFRUIT CREW, TRIXTER, FUTURE CREW, AND FARBRAUSCH"
 )
-maxwidth, unused = draw.textsize(text, font=font)
+bbox = draw.textbbox((0, 0), text, font=font)
+maxwidth = bbox[2] - bbox[0]
 
 # Set animation and sine wave parameters.
 amplitude = height / 4
@@ -73,7 +74,8 @@ while True:
             break
         # Calculate width but skip drawing if off the left side of screen.
         if x < -10:
-            char_width, char_height = draw.textsize(c, font=font)
+            bbox = draw.textbbox((0, 0), c, font=font)
+            char_width, char_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
             x += char_width
             continue
         # Calculate offset from sine wave.
@@ -81,7 +83,8 @@ while True:
         # Draw text.
         draw.text((x, y), c, font=font, fill=255)
         # Increment x position based on chacacter width.
-        char_width, char_height = draw.textsize(c, font=font)
+        bbox = draw.textbbox((0, 0), c, font=font)
+        char_width, char_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
         x += char_width
 
     # Draw the image buffer.
