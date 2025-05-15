@@ -6,14 +6,14 @@
 # Adafruit Blinka to support CircuitPython libraries. CircuitPython does
 # not support PIL/pillow (python imaging library)!
 
-import time
 import subprocess
+import time
 
-from board import SCL, SDA
 import busio
+from board import SCL, SDA
 from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1306
 
+import adafruit_ssd1306
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)

@@ -13,8 +13,8 @@ MicroPython SSD1306 OLED driver, I2C and SPI interfaces
 
 import time
 
-from micropython import const
 from adafruit_bus_device import i2c_device, spi_device
+from micropython import const
 
 try:
     # MicroPython framebuf import
@@ -30,6 +30,7 @@ except ImportError:
 try:
     # Used only for typing
     from typing import Optional
+
     import busio
     import digitalio
 except ImportError:
@@ -62,7 +63,6 @@ SET_CHARGE_PUMP = const(0x8D)
 class _SSD1306(framebuf.FrameBuffer):
     """Base class for SSD1306 display driver"""
 
-    # pylint: disable-msg=too-many-arguments
     def __init__(
         self,
         buffer: memoryview,
@@ -71,7 +71,7 @@ class _SSD1306(framebuf.FrameBuffer):
         *,
         external_vcc: bool,
         reset: Optional[digitalio.DigitalInOut],
-        page_addressing: bool
+        page_addressing: bool,
     ):
         super().__init__(buffer, width, height, _FRAMEBUF_FORMAT)
         self.width = width
@@ -240,7 +240,7 @@ class SSD1306_I2C(_SSD1306):
         addr: int = 0x3C,
         external_vcc: bool = False,
         reset: Optional[digitalio.DigitalInOut] = None,
-        page_addressing: bool = False
+        page_addressing: bool = False,
     ):
         self.i2c_device = i2c_device.I2CDevice(i2c, addr)
         self.addr = addr
@@ -287,7 +287,6 @@ class SSD1306_I2C(_SSD1306):
                 self.i2c_device.write(self.buffer)
 
 
-# pylint: disable-msg=too-many-arguments
 class SSD1306_SPI(_SSD1306):
     """
     SPI class for SSD1306
@@ -300,7 +299,6 @@ class SSD1306_SPI(_SSD1306):
     :param cs: the chip-select pin to use (sometimes labeled "SS").
     """
 
-    # pylint: disable=no-member
     # Disable should be reconsidered when refactor can be tested.
     def __init__(
         self,
@@ -315,13 +313,11 @@ class SSD1306_SPI(_SSD1306):
         baudrate: int = 8000000,
         polarity: int = 0,
         phase: int = 0,
-        page_addressing: bool = False
+        page_addressing: bool = False,
     ):
         self.page_addressing = page_addressing
         if self.page_addressing:
-            raise NotImplementedError(
-                "Page addressing mode with SPI has not yet been implemented."
-            )
+            raise NotImplementedError("Page addressing mode with SPI has not yet been implemented.")
 
         self.rate = 10 * 1024 * 1024
         dc.switch_to_output(value=0)

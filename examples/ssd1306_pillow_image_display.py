@@ -10,9 +10,11 @@
 
 # Imports the necessary libraries...
 import sys
+
 import board
 import digitalio
 from PIL import Image
+
 import adafruit_ssd1306
 
 # Setting some variables for our reset pin etc.
@@ -34,11 +36,7 @@ oled.fill(0)
 oled.show()
 
 # Open, resize, and convert image to Black and White
-image = (
-    Image.open(sys.argv[1])
-    .resize((oled.width, oled.height), Image.BICUBIC)
-    .convert("1")
-)
+image = Image.open(sys.argv[1]).resize((oled.width, oled.height), Image.BICUBIC).convert("1")
 
 # Display the converted image
 oled.image(image)

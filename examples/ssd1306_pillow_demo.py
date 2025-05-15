@@ -13,6 +13,7 @@ not support PIL/pillow (python imaging library)!
 import board
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
+
 import adafruit_ssd1306
 
 # Define the Reset Pin

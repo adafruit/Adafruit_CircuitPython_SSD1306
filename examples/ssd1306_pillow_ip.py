@@ -9,12 +9,14 @@
 # https://learn.adafruit.com/adafruit-oled-displays-for-raspberry-pi/programming-your-display
 
 # Imports the necessary libraries...
-import socket
 import fcntl
+import socket
 import struct
+
 import board
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
+
 import adafruit_ssd1306
 
 
@@ -49,10 +51,10 @@ oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
 # This sets TEXT equal to whatever your IP address is, or isn't
 try:
     TEXT = get_ip_address("wlan0")  # WiFi address of WiFi adapter. NOT ETHERNET
-except IOError:
+except OSError:
     try:
         TEXT = get_ip_address("eth0")  # WiFi address of Ethernet cable. NOT ADAPTER
-    except IOError:
+    except OSError:
         TEXT = "NO INTERNET!"
 
 # Clear display.

@@ -6,13 +6,13 @@
 
 # Import all board pins.
 import time
+
 import board
 import busio
 from digitalio import DigitalInOut
 
 # Import the SSD1306 module.
 import adafruit_ssd1306
-
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)

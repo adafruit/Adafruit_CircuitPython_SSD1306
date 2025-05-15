@@ -7,9 +7,11 @@
 
 import math
 import time
-from board import SCL, SDA
+
 import busio
+from board import SCL, SDA
 from PIL import Image, ImageDraw, ImageFont
+
 import adafruit_ssd1306
 
 # Create the I2C interface.
