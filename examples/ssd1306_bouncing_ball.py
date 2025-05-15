@@ -3,6 +3,7 @@
 
 import board
 import busio
+
 import adafruit_ssd1306
 
 # Create the I2C interface.

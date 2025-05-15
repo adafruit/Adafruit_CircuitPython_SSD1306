@@ -5,6 +5,7 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 
 import board
+
 import adafruit_ssd1306
 
 # Create the I2C bus interface.

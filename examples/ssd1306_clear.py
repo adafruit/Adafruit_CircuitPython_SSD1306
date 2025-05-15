@@ -5,12 +5,11 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 
 # Import all board pins.
-from board import SCL, SDA
 import busio
+from board import SCL, SDA
 
 # Import the SSD1306 module.
 import adafruit_ssd1306
-
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)

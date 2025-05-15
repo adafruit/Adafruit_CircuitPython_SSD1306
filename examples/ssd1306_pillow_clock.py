@@ -10,9 +10,11 @@
 
 # Imports the necessary libraries...
 import time
+
 import board
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
+
 import adafruit_ssd1306
 
 # Setting some variables for our reset pin etc.

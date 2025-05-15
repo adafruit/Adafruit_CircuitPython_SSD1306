@@ -9,6 +9,7 @@ import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 from PIL import Image, ImageDraw
+
 import adafruit_ssd1306
 
 # Create the I2C interface.
@@ -78,9 +79,7 @@ while True:
     if button_R.value:  # button is released
         draw.polygon([(60, 30), (42, 21), (42, 41)], outline=255, fill=0)  # right
     else:  # button is pressed:
-        draw.polygon(
-            [(60, 30), (42, 21), (42, 41)], outline=255, fill=1
-        )  # right filled
+        draw.polygon([(60, 30), (42, 21), (42, 41)], outline=255, fill=1)  # right filled
 
     if button_D.value:  # button is released
         draw.polygon([(30, 60), (40, 42), (20, 42)], outline=255, fill=0)  # down
