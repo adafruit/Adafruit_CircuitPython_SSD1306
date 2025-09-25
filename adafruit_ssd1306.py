@@ -37,7 +37,7 @@ except ImportError:
     pass
 
 __version__ = "0.0.0+auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_SSD1306.git"
+__repo__ = "https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_SSD1306/main/adafruit_ssd1306/bdf/font5x8.bin"
 
 # register definitions
 SET_CONTRAST = const(0x81)
