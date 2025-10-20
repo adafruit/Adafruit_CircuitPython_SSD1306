@@ -108,6 +108,9 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+# Include extra css to work around rtd theme glitches
+html_css_files = ["custom.css"]
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = "AdafruitSsd1306Librarydoc"
 
